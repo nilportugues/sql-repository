@@ -1,0 +1,94 @@
+<?php
+/**
+ * Author: Nil Portugués Calderó <contact@nilportugues.com>
+ * Date: 7/02/16
+ * Time: 17:56
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace NilPortugues\Example\Repository;
+
+use DateTime;
+
+/**
+ * Class User
+ * @package NilPortugues\Example\Repository
+ */
+class User
+{
+    protected $userId;
+    protected $username;
+    protected $alias;
+    protected $email;
+    protected $registeredOn;
+
+    /**
+     * User constructor.
+     *
+     * @param          $userId
+     * @param          $username
+     * @param          $alias
+     * @param          $email
+     * @param DateTime $registeredOn
+     */
+    public function __construct($userId, $username, $alias, $email, DateTime $registeredOn)
+    {
+        $this->userId       = $userId;
+        $this->username     = $username;
+        $this->alias        = $alias;
+        $this->email        = $email;
+        $this->registeredOn = $registeredOn;
+    }
+
+    /**
+     * Returns value for `userId`.
+     *
+     * @return mixed
+     */
+    public function userId()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * Returns value for `username`.
+     *
+     * @return mixed
+     */
+    public function username()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Returns value for `alias`.
+     *
+     * @return mixed
+     */
+    public function alias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * Returns value for `email`.
+     *
+     * @return mixed
+     */
+    public function email()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Returns value for `registeredOn`.
+     *
+     * @return DateTime
+     */
+    public function registeredOn()
+    {
+        return $this->registeredOn;
+    }
+}
