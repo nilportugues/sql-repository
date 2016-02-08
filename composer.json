@@ -14,7 +14,7 @@
   "require": {
     "nilportugues/repository": "^1.1",
     "nilportugues/assert": "^1.0",
-    "nilportugues/sql-query-builder": "^1.3"
+    "nilportugues/sql-query-builder": "^1.4"
   },
   "require-dev": {
     "phpunit/phpunit": "4.8.*",

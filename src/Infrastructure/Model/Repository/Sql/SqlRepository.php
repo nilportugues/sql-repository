@@ -67,7 +67,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         $filter->must()->equals($this->mapping->identity(), $id->id());
         $result = (array) $this->findBy($filter, null, $fields);
 
-        return array_pop($result);
+        return $result;
     }
 
     /**
@@ -99,22 +99,20 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null)
     {
-        $columns = null;
-        if ($fields) {
-            $columns = $this->getColumns($fields);
-        }
-
-        $query = $this->builder->select($this->mapping->name(), $columns);
+        $query = $this->builder->select(
+            $this->mapping->name(),
+            $this->fields($fields)
+        );
 
         if ($filter) {
             SqlFilter::filter($query, $filter);
         }
 
         if ($sort) {
-
+            SqlSorter::sort($query, $sort);
         }
 
-        return $this->builder->write($query);
+        return [$this->builder->write($query), $this->builder->getValues()];
     }
 
     /**
@@ -130,10 +128,10 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         $query->count($this->mapping->identity());
 
         if ($filter) {
-
+            SqlFilter::filter($query, $filter);
         }
 
-        return $this->builder->write($query);
+        return [$this->builder->write($query), $this->builder->getValues()];
     }
 
     /**
@@ -145,7 +143,10 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     public function exists(Identity $id)
     {
+        $filter = new DomainFilter();
+        $filter->must()->equals($this->mapping->identity(), $id->id());
 
+        return $this->count($filter);
     }
 
     /**
@@ -179,7 +180,11 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     public function remove(Identity $id)
     {
+        $query = $this->builder->delete($this->mapping->name());
+        $query->where()->equals($this->mapping->identity(), $id->id());
+        $query->limit(1);
 
+        return $this->builder->write($query);
     }
 
     /**
@@ -192,7 +197,13 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     public function removeAll(Filter $filter = null)
     {
+        $query = $this->builder->delete($this->mapping->name());
 
+        if ($filter) {
+            SqlFilter::filter($query, $filter);
+        }
+
+        return $this->builder->write($query);
     }
 
     /**
@@ -205,5 +216,40 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     public function findAll(Pageable $pageable = null)
     {
 
+        $query = $this->builder->select(
+            $this->mapping->name(),
+            $this->fields($pageable->fields())
+        );
+
+        $filter = $pageable->filters();
+        if ($filter) {
+            SqlFilter::filter($query, $filter);
+        }
+
+        $sort = $pageable->sortings();
+        if ($sort) {
+            SqlSorter::sort($query, $sort);
+        }
+
+        $query->limit(
+            $pageable->offset() - $pageable->pageSize(),
+            $pageable->pageSize()
+        );
+
+        return [$this->builder->write($query), $this->builder->getValues()];
+    }
+
+    /**
+     * @param Fields $fields
+     *
+     * @return array
+     */
+    private function fields(Fields $fields = null)
+    {
+        $columns = $this->mapping->map();
+        if ($fields) {
+            $columns = $this->getColumns($fields);
+        }
+        return $columns;
     }
 }

@@ -13,7 +13,6 @@ namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\BaseFilter;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Filter as FilterInterface;
 use NilPortugues\Sql\QueryBuilder\Manipulation\QueryInterface;
-use NilPortugues\Sql\QueryBuilder\Manipulation\Select;
 use NilPortugues\Sql\QueryBuilder\Syntax\Where;
 
 /**
@@ -27,29 +26,17 @@ class SqlFilter
     const SHOULD = 'should';
 
     /**
-     * @param Select  $query
+     * @param QueryInterface $query
      * @param FilterInterface $filter
      *
      * @return QueryInterface
      */
-    public static function filter(Select $query, FilterInterface $filter)
+    public static function filter(QueryInterface $query, FilterInterface $filter)
     {
         foreach ($filter->filters() as $condition => $filters) {
-            switch ($condition) {
-                case self::MUST:
-                    $where = $query->where();
-                    self::must($where, $filters);
-                    break;
-
-                case self::MUST_NOT:
-                    //$where = $query->where('AND NOT');
-                    self::mustNot($where, $filters);
-                    break;
-
-                case self::SHOULD:
-                    $where = $query->where('OR');
-                    self::should($where, $filters);
-                    break;
+            $filters = self::removeEmptyFilters($filters);
+            if (count($filters) > 0) {
+                self::processConditions($query, $condition, $filters);
             }
         }
 
@@ -57,14 +44,53 @@ class SqlFilter
     }
 
     /**
-     * @param $where
+     * @param array $filters
+     *
+     * @return array
+     */
+    private static function removeEmptyFilters(array $filters)
+    {
+        $filters = array_filter($filters, function ($v) {
+            return count($v) > 0;
+        });
+
+        return $filters;
+    }
+
+    /**
+     * @param QueryInterface $query
+     * @param                $condition
      * @param array          $filters
      */
-    protected static function must(Where $where, array $filters)
+    private static function processConditions(QueryInterface $query, $condition, array &$filters)
+    {
+        switch ($condition) {
+            case self::MUST:
+                $where = $query->where('AND');
+                self::apply($where, $filters);
+                break;
+
+            case self::MUST_NOT:
+                $where = $query->where()->subWhere('AND NOT');
+                self::apply($where, $filters);
+                break;
+
+            case self::SHOULD:
+                $where = $query->where()->subWhere('OR');
+                self::apply($where, $filters);
+                break;
+        }
+    }
+
+    /**
+     * @param Where $where
+     * @param array $filters
+     */
+    protected static function apply(Where $where, array $filters)
     {
         foreach ($filters as $filterName => $valuePair) {
             foreach ($valuePair as $key => $value) {
-                if (is_array($value)) {
+                if (is_array($value) && count($value) > 0) {
                     if (count($value) > 1) {
                         switch ($filterName) {
                             case BaseFilter::RANGES:
@@ -116,24 +142,5 @@ class SqlFilter
                 }
             }
         }
-    }
-
-    /**
-     * @param Where $where
-     * @param array $filters
-     */
-    protected static function mustNot(Where $where, array $filters)
-    {
-
-    }
-
-
-    /**
-     * @param Where $where
-     * @param array $filters
-     */
-    protected static function should(Where $where, array $filters)
-    {
-
     }
 }
