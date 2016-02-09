@@ -10,6 +10,7 @@
 
 namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 
+use NilPortugues\Assert\Assert;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Fields;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Filter;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
@@ -22,6 +23,7 @@ use NilPortugues\Foundation\Domain\Model\Repository\Contracts\WriteRepository;
 use NilPortugues\Foundation\Domain\Model\Repository\Filter as DomainFilter;
 use NilPortugues\Sql\QueryBuilder\Builder\GenericBuilder;
 use PDO;
+use PDOException;
 
 class SqlRepository implements ReadRepository, WriteRepository, PageRepository
 {
@@ -158,25 +160,38 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     public function add(Identity $value)
     {
-
+        //@todo: solve the object graph and persistence.
     }
 
     /**
      * Adds a collections of entities to the storage.
      *
      * @param array $values
-     *
      * @return mixed
+     *
+     * @throws PDOException
      */
     public function addAll(array $values)
     {
-
+        $this->pdo->beginTransaction();
+        try {
+            foreach($values as $value) {
+                Assert::isInstanceOf($value, Identity::class);
+                $this->add($value);
+            }
+            $this->pdo->commit();
+        } catch(PDOException $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
     }
+
 
     /**
      * Removes the entity with the given id.
      *
      * @param $id
+     * @return string
      */
     public function remove(Identity $id)
     {
@@ -184,7 +199,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         $query->where()->equals($this->mapping->identity(), $id->id());
         $query->limit(1);
 
-        return $this->builder->write($query);
+        return [$this->builder->write($query), $this->builder->getValues()];
     }
 
     /**
@@ -203,7 +218,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
             SqlFilter::filter($query, $filter);
         }
 
-        return $this->builder->write($query);
+        return [$this->builder->write($query), $this->builder->getValues()];
     }
 
     /**
