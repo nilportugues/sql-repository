@@ -148,7 +148,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         $filter = new DomainFilter();
         $filter->must()->equals($this->mapping->identity(), $id->id());
 
-        return $this->count($filter);
+        return $this->count($filter) > 0;
     }
 
     /**
