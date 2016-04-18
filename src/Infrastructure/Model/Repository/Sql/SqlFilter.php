@@ -62,29 +62,35 @@ class SqlFilter
      */
     private static function processConditions(QueryBuilder $query, $condition, array &$filters)
     {
+        $placeholders = [];
+
         switch ($condition) {
             case self::MUST:
-                $where = $query->where('AND');
-                self::apply($where, $filters);
+                self::apply($placeholders, $query, $filters, 'andWhere', false);
                 break;
 
             case self::MUST_NOT:
-                $where = $query->where()->subWhere('AND NOT');
-                self::apply($where, $filters);
+                self::apply($placeholders, $query, $filters, 'andWhere', true);
                 break;
 
             case self::SHOULD:
-                $where = $query->where()->subWhere('OR');
-                self::apply($where, $filters);
+                self::apply($placeholders, $query, $filters, 'orWhere', false);
                 break;
+        }
+
+        foreach ($placeholders as $k => $v) {
+            $query->setParameter(':k'.$k, $v);
         }
     }
 
     /**
-     * @param QueryBuilder $where
+     * @param array        $placeholders
+     * @param QueryBuilder $query
      * @param array        $filters
+     * @param string       $operator
+     * @param bool         $isNot
      */
-    protected static function apply(QueryBuilder $where, array $filters)
+    protected static function apply(array &$placeholders, QueryBuilder $query, array $filters, $operator, $isNot)
     {
         foreach ($filters as $filterName => $valuePair) {
             foreach ($valuePair as $key => $value) {
@@ -92,13 +98,37 @@ class SqlFilter
                     if (count($value) > 1) {
                         switch ($filterName) {
                             case BaseFilter::RANGES:
-                                $where->between($key, $value[0], $value[1]);
+                                $first = self::nextPlaceholder($placeholders, $operator, $isNot);
+                                $placeholders[$first] = $value[0];
+
+                                $second = self::nextPlaceholder($placeholders, $operator, $isNot);
+                                $placeholders[$second] = $value[1];
+
+                                $op = (!$isNot) ? 'BETWEEN' : 'NOT BETWEEN';
+                                $query->$operator(sprintf('%s %s % AND %s', $key, $op, $first, $second));
                                 break;
+
                             case BaseFilter::NOT_RANGES:
-                                $where->notBetween($key, $value[0], $value[1]);
+                                $first = self::nextPlaceholder($placeholders, $operator, $isNot);
+                                $placeholders[$first] = $value[0];
+
+                                $second = self::nextPlaceholder($placeholders, $operator, $isNot);
+                                $placeholders[$second] = $value[1];
+
+                                $op = (!$isNot) ? 'NOT BETWEEN' : 'BETWEEN';
+                                $query->$operator(sprintf('%s %s % AND %s', $key, $op, $first, $second));
                                 break;
+
                             case BaseFilter::GROUP:
-                                $where->in($key, $value);
+                                $names = [];
+                                foreach ($value as $k => $v) {
+                                    $nextPlaceholder = self::nextPlaceholder($placeholders, $operator, $isNot);
+                                    $names[] = $nextPlaceholder;
+                                    $placeholders[$nextPlaceholder] = $v;
+                                }
+
+                                $op = ($isNot) ? 'notIn' : 'in';
+                                $query->$operator($query->expr()->$op($key, $names));
                                 break;
                         }
                         break;
@@ -106,39 +136,74 @@ class SqlFilter
                     $value = array_shift($value);
                 }
 
+                $nextPlaceholder = self::nextPlaceholder($placeholders, $operator, $isNot);
+
                 switch ($filterName) {
                     case BaseFilter::GREATER_THAN_OR_EQUAL:
-                        $where->greaterThanOrEqual($key, $value);
+                        $op = (!$isNot) ? 'gte' : 'lt';
+                        $query->$operator($query->expr()->$op($nextPlaceholder, $value));
+                        $placeholders[$nextPlaceholder] = $value;
                         break;
                     case BaseFilter::GREATER_THAN:
-                        $where->greaterThan($key, $value);
+                        $op = (!$isNot) ? 'gt' : 'lte';
+                        $query->$operator($query->expr()->$op($nextPlaceholder, $value));
+                        $placeholders[$nextPlaceholder] = $value;
                         break;
                     case BaseFilter::LESS_THAN_OR_EQUAL:
-                        $where->lessThanOrEqual($key, $value);
+                        $op = (!$isNot) ? 'lte' : 'gt';
+                        $query->$operator($query->expr()->$op($nextPlaceholder, $value));
+                        $placeholders[$nextPlaceholder] = $value;
                         break;
                     case BaseFilter::LESS_THAN:
-                        $where->lessThan($key, $value);
+                        $op = (!$isNot) ? 'lt' : 'gte';
+                        $query->$operator($query->expr()->$op($nextPlaceholder, $value));
+                        $placeholders[$nextPlaceholder] = $value;
                         break;
                     case BaseFilter::CONTAINS:
-                        $where->in($key, $value);
+                        $op = ($isNot) ? 'NOT LIKE' : 'LIKE';
+                        $query->$operator(sprintf('%s %s %', $key, $op, $nextPlaceholder));
+                        $placeholders[$nextPlaceholder] = '%'.$value.'%';
                         break;
                     case BaseFilter::NOT_CONTAINS:
-                        $where->notIn($key, $value);
+                        $op = ($isNot) ? 'LIKE' : 'NOT LIKE';
+                        $query->$operator(sprintf('%s %s %s', $key, $op, $nextPlaceholder));
+                        $placeholders[$nextPlaceholder] = '%'.$value.'%';
                         break;
                     case BaseFilter::STARTS_WITH:
-                        $where->like($key, sprintf('%%s', $value));
+                        $op = ($isNot) ? 'LIKE' : 'NOT LIKE';
+                        $query->$operator(sprintf('%s %s %s', $key, $op, $nextPlaceholder));
+                        $placeholders[$nextPlaceholder] = '%'.$value;
                         break;
                     case BaseFilter::ENDS_WITH:
-                        $where->like($key, sprintf('%s%', $value));
+                        $op = ($isNot) ? 'LIKE' : 'NOT LIKE';
+                        $query->$operator(sprintf('%s %s %s', $key, $op, $nextPlaceholder));
+                        $placeholders[$nextPlaceholder] = $value.'%';
                         break;
                     case BaseFilter::EQUALS:
-                        $where->equals($key, $value);
+                        $query->$operator($query->expr()->eq($key, $nextPlaceholder));
+                        $placeholders[$nextPlaceholder] = $value;
                         break;
                     case BaseFilter::NOT_EQUAL:
-                        $where->notEquals($key, $value);
+                        $query->$operator($query->expr()->neq($key, $nextPlaceholder));
+                        $placeholders[$nextPlaceholder] = $value;
                         break;
                 }
             }
         }
+    }
+
+    /**
+     * @param array $placeholders
+     * @param $operator
+     * @param $isNot
+     *
+     * @return string
+     */
+    protected static function nextPlaceholder(array $placeholders, $operator, $isNot)
+    {
+        $operator = $operator[0];
+        $isNot = ($isNot) ? 'n' : 'p';
+
+        return ':k'.$operator.$isNot.count($placeholders);
     }
 }
