@@ -20,7 +20,7 @@ interface Mapping
     public function name();
 
     /**
-     * Key is object properties, values represent storage representation name.
+     * Keys are object properties without property defined in identity(). Values its SQL column equivalents.
      *
      * @return array
      */

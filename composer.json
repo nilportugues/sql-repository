@@ -14,6 +14,7 @@
   "require": {
     "nilportugues/repository": "^1.1",
     "nilportugues/assert": "^1.0",
+    "nilportugues/serializer": "1.1.*",
     "doctrine/dbal" : "2.5.*"
   },
   "require-dev": {

@@ -11,12 +11,13 @@
 namespace NilPortugues\Example\Repository;
 
 use DateTime;
+use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
 
 /**
  * Class User
  * @package NilPortugues\Example\Repository
  */
-class User
+class User implements Identity
 {
     protected $userId;
     protected $username;
@@ -39,7 +40,7 @@ class User
         $this->username     = $username;
         $this->alias        = $alias;
         $this->email        = $email;
-        $this->registeredOn = $registeredOn;
+        $this->registeredOn = $registeredOn->format('Y-m-d H:i:s');
     }
 
     /**
@@ -85,10 +86,26 @@ class User
     /**
      * Returns value for `registeredOn`.
      *
-     * @return DateTime
+     * @return string
      */
     public function registeredOn()
     {
-        return $this->registeredOn;
+        return new DateTime($this->registeredOn);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function id()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->id();
     }
 }

@@ -38,14 +38,13 @@ class UserMapping extends SqlMapping
     }
 
     /**
-     * Array with keys as object properties, and values its SQL column equivalents.
+     * Keys are object properties without property defined in identity(). Values its SQL column equivalents.
      *
      * @return array
      */
     public function map()
     {
         return [
-            'userId' => 'user_id',
             'username' => 'username',
             'alias' => 'public_username',
             'email' => 'email',

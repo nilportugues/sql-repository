@@ -41,7 +41,7 @@ class SqlFilter
         }
 
         foreach ($placeholders as $k => $v) {
-            $query->setParameter(':k'.$k, $v);
+            $query->setParameter($k, $v);
         }
 
         return $query;
@@ -142,22 +142,22 @@ class SqlFilter
                 switch ($filterName) {
                     case BaseFilter::GREATER_THAN_OR_EQUAL:
                         $op = (!$isNot) ? 'gte' : 'lt';
-                        $query->$operator($query->expr()->$op($nextPlaceholder, $value));
+                        $query->$operator($query->expr()->$op($key, $nextPlaceholder));
                         $placeholders[$nextPlaceholder] = $value;
                         break;
                     case BaseFilter::GREATER_THAN:
                         $op = (!$isNot) ? 'gt' : 'lte';
-                        $query->$operator($query->expr()->$op($nextPlaceholder, $value));
+                        $query->$operator($query->expr()->$op($key, $nextPlaceholder));
                         $placeholders[$nextPlaceholder] = $value;
                         break;
                     case BaseFilter::LESS_THAN_OR_EQUAL:
                         $op = (!$isNot) ? 'lte' : 'gt';
-                        $query->$operator($query->expr()->$op($nextPlaceholder, $value));
+                        $query->$operator($query->expr()->$op($key, $nextPlaceholder));
                         $placeholders[$nextPlaceholder] = $value;
                         break;
                     case BaseFilter::LESS_THAN:
                         $op = (!$isNot) ? 'lt' : 'gte';
-                        $query->$operator($query->expr()->$op($nextPlaceholder, $value));
+                        $query->$operator($query->expr()->$op($key, $nextPlaceholder));
                         $placeholders[$nextPlaceholder] = $value;
                         break;
                     case BaseFilter::CONTAINS:

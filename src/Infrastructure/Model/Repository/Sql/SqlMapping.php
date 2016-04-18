@@ -25,7 +25,7 @@ abstract class SqlMapping implements Mapping
     abstract public function name();
 
     /**
-     * Array with keys as object properties, and values its SQL column equivalents.
+     * Keys are object properties without property defined in identity(). Values its SQL column equivalents.
      *
      * @return array
      */
