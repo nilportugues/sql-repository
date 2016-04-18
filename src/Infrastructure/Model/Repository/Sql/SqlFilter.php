@@ -10,10 +10,9 @@
 
 namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\BaseFilter;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Filter as FilterInterface;
-use NilPortugues\Sql\QueryBuilder\Manipulation\QueryInterface;
-use NilPortugues\Sql\QueryBuilder\Syntax\Where;
 
 /**
  * Class SqlFilter
@@ -26,12 +25,11 @@ class SqlFilter
     const SHOULD = 'should';
 
     /**
-     * @param QueryInterface $query
+     * @param QueryBuilder $query
      * @param FilterInterface $filter
-     *
-     * @return QueryInterface
+     * @return QueryBuilder
      */
-    public static function filter(QueryInterface $query, FilterInterface $filter)
+    public static function filter(QueryBuilder $query, FilterInterface $filter)
     {
         foreach ($filter->filters() as $condition => $filters) {
             $filters = self::removeEmptyFilters($filters);
@@ -58,11 +56,11 @@ class SqlFilter
     }
 
     /**
-     * @param QueryInterface $query
-     * @param                $condition
-     * @param array          $filters
+     * @param QueryBuilder $query
+     * @param $condition
+     * @param array $filters
      */
-    private static function processConditions(QueryInterface $query, $condition, array &$filters)
+    private static function processConditions(QueryBuilder $query, $condition, array &$filters)
     {
         switch ($condition) {
             case self::MUST:
@@ -83,10 +81,10 @@ class SqlFilter
     }
 
     /**
-     * @param Where $where
+     * @param QueryBuilder $where
      * @param array $filters
      */
-    protected static function apply(Where $where, array $filters)
+    protected static function apply(QueryBuilder $where, array $filters)
     {
         foreach ($filters as $filterName => $valuePair) {
             foreach ($valuePair as $key => $value) {

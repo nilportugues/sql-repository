@@ -10,11 +10,9 @@
 
 namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Order;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Sort as SortInterface;
-use NilPortugues\Sql\QueryBuilder\Manipulation\QueryInterface;
-use NilPortugues\Sql\QueryBuilder\Manipulation\Select;
-use NilPortugues\Sql\QueryBuilder\Syntax\OrderBy;
 
 /**
  * Class SqlSorter
@@ -23,16 +21,14 @@ use NilPortugues\Sql\QueryBuilder\Syntax\OrderBy;
 class SqlSorter
 {
     /**
-     * @param Select        $query
+     * @param QueryBuilder $queryBuilder
      * @param SortInterface $sort
-     *
-     * @return QueryInterface
      */
-    public static function sort(Select $query, SortInterface $sort)
+    public static function sort(QueryBuilder $queryBuilder, SortInterface $sort)
     {
         /** @var Order $order */
         foreach ($sort->orders() as $propertyName => $order) {
-            $query->orderBy($propertyName, $order->isAscending() ? OrderBy::ASC : OrderBy::DESC);
+            $queryBuilder->orderBy($propertyName, $order->isAscending() ? Order::ASCENDING : Order::DESCENDING);
         }
     }
 }
