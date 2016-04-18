@@ -40,9 +40,7 @@ class SqlFilter
             }
         }
 
-        foreach ($placeholders as $k => $v) {
-            $query->setParameter($k, $v);
-        }
+        $query->setParameters($placeholders);
 
         return $query;
     }
