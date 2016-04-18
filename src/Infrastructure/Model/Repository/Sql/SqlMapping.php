@@ -30,4 +30,16 @@ abstract class SqlMapping implements Mapping
      * @return array
      */
     abstract public function map();
+
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    abstract public function fromArray(array $data);
+
+    /**
+     * @param $object
+     * @return array
+     */
+    abstract public function toArray($object);
 }
