@@ -1,13 +1,13 @@
 <?php
+
 /**
  * Author: Nil Portugués Calderó <contact@nilportugues.com>
  * Date: 7/02/16
- * Time: 16:06
+ * Time: 16:06.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -15,8 +15,7 @@ use NilPortugues\Foundation\Domain\Model\Repository\Contracts\BaseFilter;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Filter as FilterInterface;
 
 /**
- * Class SqlFilter
- * @package NilPortugues\Foundation\Infrastructure\Model\Repository\Sql
+ * Class SqlFilter.
  */
 class SqlFilter
 {
@@ -25,8 +24,9 @@ class SqlFilter
     const SHOULD = 'should';
 
     /**
-     * @param QueryBuilder $query
+     * @param QueryBuilder    $query
      * @param FilterInterface $filter
+     *
      * @return QueryBuilder
      */
     public static function filter(QueryBuilder $query, FilterInterface $filter)
@@ -82,7 +82,7 @@ class SqlFilter
 
     /**
      * @param QueryBuilder $where
-     * @param array $filters
+     * @param array        $filters
      */
     protected static function apply(QueryBuilder $where, array $filters)
     {

@@ -1,13 +1,13 @@
 <?php
+
 /**
  * Author: Nil Portugués Calderó <contact@nilportugues.com>
  * Date: 7/02/16
- * Time: 17:01
+ * Time: 17:01.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace NilPortugues\Foundation\Domain\Model\Repository\Contracts;
 
 interface Mapping
@@ -28,6 +28,7 @@ interface Mapping
 
     /**
      * Name of the identity field in storage.
+     *
      * @return string
      */
     public function identity();

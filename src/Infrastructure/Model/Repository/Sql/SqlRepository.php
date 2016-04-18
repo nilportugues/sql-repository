@@ -1,13 +1,13 @@
 <?php
+
 /**
  * Author: Nil Portugués Calderó <contact@nilportugues.com>
  * Date: 7/02/16
- * Time: 15:58
+ * Time: 15:58.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 
 use Doctrine\DBAL\DriverManager;
@@ -35,7 +35,8 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
 
     /**
      * SqlRepository constructor.
-     * @param PDO $pdo
+     *
+     * @param PDO        $pdo
      * @param SqlMapping $mapping
      */
     public function __construct(PDO $pdo, SqlMapping $mapping)
@@ -47,19 +48,20 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     /**
      * Retrieves an entity by its id.
      *
-     * @param Identity $id
+     * @param Identity    $id
      * @param Fields|null $fields
      *
      * @return array
      */
     public function find(Identity $id, Fields $fields = null)
     {
-        return (array)$this->selectOneQuery($id->id(), ($fields) ? $this->getColumns($fields) : $fields);
+        return (array) $this->selectOneQuery($id->id(), ($fields) ? $this->getColumns($fields) : $fields);
     }
 
     /**
-     * @param string $id
+     * @param string     $id
      * @param array|null $fields
+     *
      * @return mixed
      */
     protected function selectOneQuery($id, array $fields = null)
@@ -67,7 +69,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         $query = $this->queryBuilder();
 
         return (array) $query
-            ->select(($fields) ? $fields : ["*"])
+            ->select(($fields) ? $fields : ['*'])
             ->from($this->mapping->name())
             ->andWhere($query->expr()->eq($this->mapping->identity(), ':id'))
             ->setParameter(':id', $id)
@@ -128,7 +130,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         $query = $this->queryBuilder();
 
         $query
-            ->select(['COUNT(' . $this->mapping->identity() . ') AS total'])
+            ->select(['COUNT('.$this->mapping->identity().') AS total'])
             ->from($this->mapping->name())
             ->execute()
             ->fetch(PDO::FETCH_ASSOC);
@@ -137,7 +139,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
             SqlFilter::filter($query, $filter);
         }
 
-        return (int)$query->execute()->fetch(PDO::FETCH_ASSOC)['total'];
+        return (int) $query->execute()->fetch(PDO::FETCH_ASSOC)['total'];
     }
 
     /**
@@ -154,14 +156,31 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         return $this->selectOneQuery($value->id());
     }
 
+    /**
+     * @param Identity $value
+     */
     protected function insertQuery(Identity $value)
     {
+        $fields = [];
+        $query = $this->queryBuilder();
+
+        foreach ($this->mapping->map() as $objectPropertyGetter => $sqlColumn) {
+            $placeholder = ':'.$sqlColumn;
+            $fields[$sqlColumn] = $placeholder;
+            $query->setParameter($placeholder, $value->$objectPropertyGetter());
+        }
+
+        $query
+            ->insert($this->mapping->name())
+            ->values($fields)
+            ->execute();
     }
 
     /**
      * Adds a collections of entities to the storage.
      *
      * @param array $values
+     *
      * @return mixed
      *
      * @throws PDOException
@@ -203,6 +222,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
 
     /**
      * @param array $ids
+     *
      * @return array
      */
     protected function fetchExistingRows(array $ids)
@@ -218,10 +238,31 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     }
 
     /**
+     * @param Identity $value
+     */
+    protected function updateQuery(Identity $value)
+    {
+        $fields = [];
+        $query = $this->queryBuilder();
+
+        foreach ($this->mapping->map() as $objectPropertyGetter => $sqlColumn) {
+            $placeholder = ':'.$sqlColumn;
+            $fields[$sqlColumn] = $placeholder;
+            $query->setParameter($placeholder, $value->$objectPropertyGetter());
+        }
+
+        $query
+            ->update($this->mapping->name())
+            ->values($fields)
+            ->where($query->expr()->eq($this->mapping->identity(), $value->id()))
+            ->execute();
+    }
+
+    /**
      * Returns all instances of the type.
      *
      * @param Filter|null $filter
-     * @param Sort|null $sort
+     * @param Sort|null   $sort
      * @param Fields|null $fields
      *
      * @return array
@@ -231,7 +272,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         $query = $this->queryBuilder();
 
         $query
-            ->select(($fields) ? $this->getColumns($fields) : ["*"])
+            ->select(($fields) ? $this->getColumns($fields) : ['*'])
             ->from($this->mapping->name());
 
         if ($filter) {
@@ -294,7 +335,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         $query = $this->queryBuilder();
 
         $query
-            ->select(($fields = $pageable->fields()) ? $this->getColumns($fields) : ["*"])
+            ->select(($fields = $pageable->fields()) ? $this->getColumns($fields) : ['*'])
             ->from($this->mapping->name());
 
         if ($filter = $pageable->filters()) {
@@ -305,19 +346,11 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
             SqlSorter::sort($query, $sort);
         }
 
-        $sql = sprintf($query->getSQL() . ' LIMIT %s, %s',
-            (int)($pageable->offset() - $pageable->pageSize()),
-            (int)$pageable->pageSize()
+        $sql = sprintf($query->getSQL().' LIMIT %s, %s',
+            (int) ($pageable->offset() - $pageable->pageSize()),
+            (int) $pageable->pageSize()
         );
 
         return $query->getConnection()->executeQuery($sql, $query->getParameters());
-    }
-
-    /**
-     * @param Identity $value
-     */
-    protected function updateQuery(Identity $value)
-    {
-
     }
 }
