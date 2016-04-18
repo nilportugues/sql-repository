@@ -31,11 +31,17 @@ class SqlFilter
      */
     public static function filter(QueryBuilder $query, FilterInterface $filter)
     {
+        $placeholders = [];
+
         foreach ($filter->filters() as $condition => $filters) {
             $filters = self::removeEmptyFilters($filters);
             if (count($filters) > 0) {
-                self::processConditions($query, $condition, $filters);
+                self::processConditions($placeholders, $query, $condition, $filters);
             }
+        }
+
+        foreach ($placeholders as $k => $v) {
+            $query->setParameter(':k'.$k, $v);
         }
 
         return $query;
@@ -56,14 +62,13 @@ class SqlFilter
     }
 
     /**
+     * @param array $placeholders
      * @param QueryBuilder $query
      * @param $condition
      * @param array $filters
      */
-    private static function processConditions(QueryBuilder $query, $condition, array &$filters)
+    private static function processConditions(array &$placeholders, QueryBuilder $query, $condition, array &$filters)
     {
-        $placeholders = [];
-
         switch ($condition) {
             case self::MUST:
                 self::apply($placeholders, $query, $filters, 'andWhere', false);
@@ -76,10 +81,6 @@ class SqlFilter
             case self::SHOULD:
                 self::apply($placeholders, $query, $filters, 'orWhere', false);
                 break;
-        }
-
-        foreach ($placeholders as $k => $v) {
-            $query->setParameter(':k'.$k, $v);
         }
     }
 
