@@ -26,17 +26,19 @@ class SqlFilter
     /**
      * @param QueryBuilder    $query
      * @param FilterInterface $filter
+     * @param SqlMapping      $mapping
      *
      * @return QueryBuilder
      */
-    public static function filter(QueryBuilder $query, FilterInterface $filter)
+    public static function filter(QueryBuilder $query, FilterInterface $filter, SqlMapping $mapping)
     {
         $placeholders = [];
+        $columns = $mapping->map();
 
         foreach ($filter->filters() as $condition => $filters) {
             $filters = self::removeEmptyFilters($filters);
             if (count($filters) > 0) {
-                self::processConditions($placeholders, $query, $condition, $filters);
+                self::processConditions($columns, $placeholders, $query, $condition, $filters);
             }
         }
 
@@ -60,39 +62,55 @@ class SqlFilter
     }
 
     /**
+     * @param array        $columns
      * @param array        $placeholders
      * @param QueryBuilder $query
      * @param $condition
      * @param array $filters
      */
-    private static function processConditions(array &$placeholders, QueryBuilder $query, $condition, array &$filters)
-    {
+    private static function processConditions(
+        array &$columns,
+        array &$placeholders,
+        QueryBuilder $query,
+        $condition,
+        array &$filters
+    ) {
         switch ($condition) {
             case self::MUST:
-                self::apply($placeholders, $query, $filters, 'andWhere', false);
+                self::apply($columns, $placeholders, $query, $filters, 'andWhere', false);
                 break;
 
             case self::MUST_NOT:
-                self::apply($placeholders, $query, $filters, 'andWhere', true);
+                self::apply($columns, $placeholders, $query, $filters, 'andWhere', true);
                 break;
 
             case self::SHOULD:
-                self::apply($placeholders, $query, $filters, 'orWhere', false);
+                self::apply($columns, $placeholders, $query, $filters, 'orWhere', false);
                 break;
         }
     }
 
     /**
+     * @param array        $columns
      * @param array        $placeholders
      * @param QueryBuilder $query
      * @param array        $filters
-     * @param string       $operator
-     * @param bool         $isNot
+     * @param $operator
+     * @param $isNot
      */
-    protected static function apply(array &$placeholders, QueryBuilder $query, array $filters, $operator, $isNot)
-    {
+    protected static function apply(
+        array &$columns,
+        array &$placeholders,
+        QueryBuilder $query,
+        array $filters,
+        $operator,
+        $isNot
+    ) {
         foreach ($filters as $filterName => $valuePair) {
             foreach ($valuePair as $key => $value) {
+                self::guardColumnExists($columns, $key);
+                $key = $columns[$key];
+
                 if (is_array($value) && count($value) > 0) {
                     if (count($value) > 1) {
                         switch ($filterName) {
@@ -188,25 +206,31 @@ class SqlFilter
     }
 
     /**
-     * @param array        $placeholders
-     * @param QueryBuilder $query
-     * @param $operator
-     * @param $nextPlaceholder
-     * @param $key
-     * @param $op
-     * @param $value
+     * @param $columns
+     * @param $propertyName
+     *
+     * @return mixed
      */
-    protected static function likeQuery(
-        array &$placeholders,
-        QueryBuilder $query,
-        $operator,
-        $nextPlaceholder,
-        $key,
-        $op,
-        $value
-    ) {
-        $query->$operator(sprintf('%s %s %s', $key, $op, $nextPlaceholder));
-        $placeholders[$nextPlaceholder] = $value;
+    protected static function guardColumnExists(array &$columns, $propertyName)
+    {
+        if (empty($columns[$propertyName])) {
+            throw new \RuntimeException(sprintf('Property %s has associated column.', $propertyName));
+        }
+    }
+
+    /**
+     * @param array $placeholders
+     * @param $operator
+     * @param $isNot
+     *
+     * @return string
+     */
+    protected static function nextPlaceholder(array $placeholders, $operator, $isNot)
+    {
+        $operator = $operator[0];
+        $isNot = ($isNot) ? 'n' : 'p';
+
+        return ':k'.$operator.$isNot.count($placeholders);
     }
 
     /**
@@ -232,17 +256,24 @@ class SqlFilter
     }
 
     /**
-     * @param array $placeholders
+     * @param array        $placeholders
+     * @param QueryBuilder $query
      * @param $operator
-     * @param $isNot
-     *
-     * @return string
+     * @param $nextPlaceholder
+     * @param $key
+     * @param $op
+     * @param $value
      */
-    protected static function nextPlaceholder(array $placeholders, $operator, $isNot)
-    {
-        $operator = $operator[0];
-        $isNot = ($isNot) ? 'n' : 'p';
-
-        return ':k'.$operator.$isNot.count($placeholders);
+    protected static function likeQuery(
+        array &$placeholders,
+        QueryBuilder $query,
+        $operator,
+        $nextPlaceholder,
+        $key,
+        $op,
+        $value
+    ) {
+        $query->$operator(sprintf('%s %s %s', $key, $op, $nextPlaceholder));
+        $placeholders[$nextPlaceholder] = $value;
     }
 }

@@ -163,18 +163,18 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     {
         $fields = [];
         $query = $this->queryBuilder();
-        $object = ArrayTransformer::create()->serialize($value);
+        $object = $this->mapping->toArray($value);
 
-        foreach ($this->mapping->map() as $objectPropertyGetter => $sqlColumn) {
-            if (false === array_key_exists($objectPropertyGetter, $object)) {
+        foreach ($this->mapping->map() as $objectProperty => $sqlColumn) {
+            if (false === array_key_exists($objectProperty, $object)) {
                 throw new \RuntimeException(
-                    sprintf('Object of class %s has no property %s', get_class($value), $objectPropertyGetter)
+                    sprintf('Object of class %s has no property %s', get_class($value), $objectProperty)
                 );
             }
 
             $placeholder = ':'.$sqlColumn;
             $fields[$sqlColumn] = $placeholder;
-            $query->setParameter($placeholder, $object[$objectPropertyGetter]);
+            $query->setParameter($placeholder, $object[$objectProperty]);
         }
 
         $query
@@ -251,18 +251,18 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     {
         $fields = [];
         $query = $this->queryBuilder();
-        $object = ArrayTransformer::create()->serialize($value);
+        $object = $this->mapping->toArray($value);
 
-        foreach ($this->mapping->map() as $objectPropertyGetter => $sqlColumn) {
-            if (false === array_key_exists($objectPropertyGetter, $object)) {
+        foreach ($this->mapping->map() as $objectProperty => $sqlColumn) {
+            if (false === array_key_exists($objectProperty, $object)) {
                 throw new \RuntimeException(
-                    sprintf('Object of class %s has no property %s', get_class($value), $objectPropertyGetter)
+                    sprintf('Object of class %s has no property %s', get_class($value), $objectProperty)
                 );
             }
 
             $placeholder = ':'.$sqlColumn;
             $fields[$sqlColumn] = $placeholder;
-            $query->setParameter($placeholder, $value->$objectPropertyGetter());
+            $query->setParameter($placeholder, $value->$objectProperty());
         }
 
         $query
@@ -283,9 +283,6 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null)
     {
-        //@todo: check that filter, sort and field values are mapped values in $this->mappings
-        //@todo: and fail if not.
-
         $query = $this->queryBuilder();
 
         $query
@@ -299,6 +296,8 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         if ($sort) {
             SqlSorter::sort($query, $sort, $this->mapping);
         }
+
+      //  echo $query->getSQL(); die();
 
         return $query->execute()->fetchAll(PDO::FETCH_ASSOC);
     }

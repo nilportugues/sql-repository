@@ -1,21 +1,20 @@
 <?php
+
 /**
  * Author: Nil Portugués Calderó <contact@nilportugues.com>
  * Date: 7/02/16
- * Time: 17:56
+ * Time: 17:56.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace NilPortugues\Example\Repository;
 
 use DateTime;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
 
 /**
- * Class User
- * @package NilPortugues\Example\Repository
+ * Class User.
  */
 class User implements Identity
 {
@@ -36,11 +35,11 @@ class User implements Identity
      */
     public function __construct($userId, $username, $alias, $email, DateTime $registeredOn)
     {
-        $this->userId       = $userId;
-        $this->username     = $username;
-        $this->alias        = $alias;
-        $this->email        = $email;
-        $this->registeredOn = $registeredOn->format('Y-m-d H:i:s');
+        $this->userId = $userId;
+        $this->username = $username;
+        $this->alias = $alias;
+        $this->email = $email;
+        $this->registeredOn = $registeredOn;
     }
 
     /**
@@ -86,11 +85,11 @@ class User implements Identity
     /**
      * Returns value for `registeredOn`.
      *
-     * @return string
+     * @return DateTime
      */
     public function registeredOn()
     {
-        return new DateTime($this->registeredOn);
+        return $this->registeredOn;
     }
 
     /**

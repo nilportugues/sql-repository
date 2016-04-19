@@ -20,7 +20,6 @@ CREATE TABLE users (
   created_at DATETIME
 );');
 
-
 $mapping = new UserMapping();
 $repository = new UserRepository($pdo, $mapping);
 
@@ -31,14 +30,12 @@ $userId = new UserId(1);
 print_r($repository->find($userId));
 echo PHP_EOL;
 
-
 $filter = new Filter();
-$filter->must()->greaterThanOrEqual('created_at', '2016-01-01 00:00:00');
-$filter->must()->lessThan('created_at', '2016-02-01 00:00:00');
+$filter->must()->greaterThanOrEqual('registeredOn', '2016-01-01 00:00:00');
+$filter->must()->lessThan('registeredOn', '2016-02-01 00:00:00');
 
 $sort = new Sort();
-//$sort->setOrderFor('registeredOn', new Order('ASC'));
-$sort->setOrderFor('created_at', new Order('ASC'));
+$sort->setOrderFor('registeredOn', new Order('ASC'));
 
 print_r($repository->findBy($filter, $sort));
 echo PHP_EOL;

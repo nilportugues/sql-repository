@@ -22,12 +22,29 @@ class SqlSorter
     /**
      * @param QueryBuilder  $queryBuilder
      * @param SortInterface $sort
+     * @param SqlMapping    $mapping
      */
-    public static function sort(QueryBuilder $queryBuilder, SortInterface $sort)
+    public static function sort(QueryBuilder $queryBuilder, SortInterface $sort, SqlMapping $mapping)
     {
-        /** @var Order $order */
+        /* @var Order $order */
+        $columns = $mapping->map();
+
         foreach ($sort->orders() as $propertyName => $order) {
-            $queryBuilder->orderBy($propertyName, $order->isAscending() ? Order::ASCENDING : Order::DESCENDING);
+            self::guardColumnExists($columns, $propertyName);
+            $queryBuilder->orderBy($columns[$propertyName], $order->isAscending() ? Order::ASCENDING : Order::DESCENDING);
+        }
+    }
+
+    /**
+     * @param $columns
+     * @param $propertyName
+     *
+     * @return mixed
+     */
+    protected static function guardColumnExists($columns, $propertyName)
+    {
+        if (empty($columns[$propertyName])) {
+            throw new \RuntimeException(sprintf('Property %s has associated column.', $propertyName));
         }
     }
 }

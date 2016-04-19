@@ -1,20 +1,19 @@
 <?php
+
 /**
  * Author: Nil Portugués Calderó <contact@nilportugues.com>
  * Date: 7/02/16
- * Time: 18:12
+ * Time: 18:12.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace NilPortugues\Example\Repository;
 
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
 
 /**
- * Class UserId
- * @package NilPortugues\Example\Repository
+ * Class UserId.
  */
 class UserId implements Identity
 {
