@@ -38,6 +38,7 @@ class SqlRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->repository->transactional($transaction);
 
         for ($i = 1; $i <= 2; ++$i) {
+            /** @var Customer $customer */
             $customer = $this->repository->find(new CustomerId($i));
             $this->assertEquals('Homer Simpson', $customer->name());
         }
