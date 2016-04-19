@@ -60,7 +60,7 @@ class SqlFilter
     }
 
     /**
-     * @param array $placeholders
+     * @param array        $placeholders
      * @param QueryBuilder $query
      * @param $condition
      * @param array $filters
@@ -140,55 +140,95 @@ class SqlFilter
                 switch ($filterName) {
                     case BaseFilter::GREATER_THAN_OR_EQUAL:
                         $op = (!$isNot) ? 'gte' : 'lt';
-                        $query->$operator($query->expr()->$op($key, $nextPlaceholder));
-                        $placeholders[$nextPlaceholder] = $value;
+                        self::query($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::GREATER_THAN:
                         $op = (!$isNot) ? 'gt' : 'lte';
-                        $query->$operator($query->expr()->$op($key, $nextPlaceholder));
-                        $placeholders[$nextPlaceholder] = $value;
+                        self::query($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::LESS_THAN_OR_EQUAL:
                         $op = (!$isNot) ? 'lte' : 'gt';
-                        $query->$operator($query->expr()->$op($key, $nextPlaceholder));
-                        $placeholders[$nextPlaceholder] = $value;
+                        self::query($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::LESS_THAN:
                         $op = (!$isNot) ? 'lt' : 'gte';
-                        $query->$operator($query->expr()->$op($key, $nextPlaceholder));
-                        $placeholders[$nextPlaceholder] = $value;
+                        self::query($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::CONTAINS:
                         $op = ($isNot) ? 'NOT LIKE' : 'LIKE';
-                        $query->$operator(sprintf('%s %s %', $key, $op, $nextPlaceholder));
-                        $placeholders[$nextPlaceholder] = '%'.$value.'%';
+                        $value = '%'.$value.'%';
+                        self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::NOT_CONTAINS:
                         $op = ($isNot) ? 'LIKE' : 'NOT LIKE';
-                        $query->$operator(sprintf('%s %s %s', $key, $op, $nextPlaceholder));
-                        $placeholders[$nextPlaceholder] = '%'.$value.'%';
+                        $value = '%'.$value.'%';
+                        self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::STARTS_WITH:
                         $op = ($isNot) ? 'LIKE' : 'NOT LIKE';
-                        $query->$operator(sprintf('%s %s %s', $key, $op, $nextPlaceholder));
-                        $placeholders[$nextPlaceholder] = '%'.$value;
+                        $value = '%'.$value;
+                        self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::ENDS_WITH:
                         $op = ($isNot) ? 'LIKE' : 'NOT LIKE';
-                        $query->$operator(sprintf('%s %s %s', $key, $op, $nextPlaceholder));
-                        $placeholders[$nextPlaceholder] = $value.'%';
+                        $value = $value.'%';
+                        self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::EQUALS:
-                        $query->$operator($query->expr()->eq($key, $nextPlaceholder));
-                        $placeholders[$nextPlaceholder] = $value;
+                        $op = (!$isNot) ? 'eq' : 'neq';
+                        self::query($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::NOT_EQUAL:
-                        $query->$operator($query->expr()->neq($key, $nextPlaceholder));
-                        $placeholders[$nextPlaceholder] = $value;
+                        $op = (!$isNot) ? 'neq' : 'eq';
+                        self::query($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                 }
             }
         }
+    }
+
+    /**
+     * @param array        $placeholders
+     * @param QueryBuilder $query
+     * @param $operator
+     * @param $nextPlaceholder
+     * @param $key
+     * @param $op
+     * @param $value
+     */
+    protected static function likeQuery(
+        array &$placeholders,
+        QueryBuilder $query,
+        $operator,
+        $nextPlaceholder,
+        $key,
+        $op,
+        $value
+    ) {
+        $query->$operator(sprintf('%s %s %s', $key, $op, $nextPlaceholder));
+        $placeholders[$nextPlaceholder] = $value;
+    }
+
+    /**
+     * @param array        $placeholders
+     * @param QueryBuilder $query
+     * @param string       $operator
+     * @param string       $nextPlaceholder
+     * @param string       $key
+     * @param string       $op
+     * @param $value
+     */
+    protected static function query(
+        array &$placeholders,
+        QueryBuilder $query,
+        $operator,
+        $nextPlaceholder,
+        $key,
+        $op,
+        $value
+    ) {
+        $query->$operator($query->expr()->$op($key, $nextPlaceholder));
+        $placeholders[$nextPlaceholder] = $value;
     }
 
     /**

@@ -27,6 +27,7 @@ class ArrayTransformer
         if (null === static::$instance) {
             static::$instance = new Serializer(new \NilPortugues\Serializer\Transformer\ArrayTransformer());
         }
+
         return static::$instance;
     }
     /**

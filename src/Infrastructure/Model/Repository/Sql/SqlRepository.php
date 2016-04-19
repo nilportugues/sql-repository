@@ -166,7 +166,6 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         $object = ArrayTransformer::create()->serialize($value);
 
         foreach ($this->mapping->map() as $objectPropertyGetter => $sqlColumn) {
-
             if (false === array_key_exists($objectPropertyGetter, $object)) {
                 throw new \RuntimeException(
                     sprintf('Object of class %s has no property %s', get_class($value), $objectPropertyGetter)
@@ -260,7 +259,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
                     sprintf('Object of class %s has no property %s', get_class($value), $objectPropertyGetter)
                 );
             }
-            
+
             $placeholder = ':'.$sqlColumn;
             $fields[$sqlColumn] = $placeholder;
             $query->setParameter($placeholder, $value->$objectPropertyGetter());
