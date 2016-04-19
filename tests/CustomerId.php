@@ -2,10 +2,9 @@
 
 namespace NilPortugues\Tests;
 
-
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
 
-class CustomersId implements Identity
+class CustomerId implements Identity
 {
     /** @var string */
     protected $id;

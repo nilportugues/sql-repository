@@ -12,11 +12,12 @@ class PDOProvider
         $pdo->exec('
 CREATE TABLE customers (
   customer_id INTEGER PRIMARY KEY AUTOINCREMENT,  
-  customername CHAR(255),
+  customer_name CHAR(255),
   total_orders INT,
   total_earnings FLOAT,
   created_at DATETIME
 );');
+
         return $pdo;
     }
 

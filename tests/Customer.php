@@ -2,7 +2,6 @@
 
 namespace NilPortugues\Tests;
 
-
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
 
 class Customer implements Identity
@@ -20,10 +19,11 @@ class Customer implements Identity
 
     /**
      * Customer constructor.
-     * @param int $id
-     * @param string $name
-     * @param float $totalOrders
-     * @param float $totalEarnings
+     *
+     * @param int       $id
+     * @param string    $name
+     * @param float     $totalOrders
+     * @param float     $totalEarnings
      * @param \DateTime $date
      */
     public function __construct($id, $name, $totalOrders, $totalEarnings, \DateTime $date)
@@ -99,7 +99,6 @@ class Customer implements Identity
         return $this->date;
     }
 
-
     /**
      * @return int
      */
@@ -113,6 +112,6 @@ class Customer implements Identity
      */
     public function __toString()
     {
-        return (string)$this->id();
+        return (string) $this->id();
     }
 }

@@ -2,7 +2,6 @@
 
 namespace NilPortugues\Tests;
 
-
 use NilPortugues\Foundation\Infrastructure\Model\Repository\Sql\SqlMapping;
 
 class CustomerMapping extends SqlMapping
@@ -14,7 +13,7 @@ class CustomerMapping extends SqlMapping
      */
     public function identity()
     {
-        // TODO: Implement identity() method.
+        return 'customer_id';
     }
 
     /**
@@ -24,7 +23,7 @@ class CustomerMapping extends SqlMapping
      */
     public function name()
     {
-        // TODO: Implement name() method.
+        return 'customers';
     }
 
     /**
@@ -34,7 +33,12 @@ class CustomerMapping extends SqlMapping
      */
     public function map()
     {
-        // TODO: Implement map() method.
+        return [
+            'customer_name',
+            'total_orders',
+            'total_earnings',
+            'created_at',
+        ];
     }
 
     /**
@@ -44,16 +48,27 @@ class CustomerMapping extends SqlMapping
      */
     public function fromArray(array $data)
     {
-        // TODO: Implement fromArray() method.
+        return new Customer(
+            $data['customer_id'],
+            $data['customer_name'],
+            $data['total_orders'],
+            $data['total_earnings'],
+            new \DateTime($data['created_at'])
+        );
     }
 
     /**
-     * @param $object
+     * @param Customer $object
      *
      * @return array
      */
     public function toArray($object)
     {
-        // TODO: Implement toArray() method.
+        return [
+            'customer_name' => $object->name(),
+            'total_orders' => $object->totalOrders(),
+            'total_earnings' => $object->totalEarnings(),
+            'created_at' => $object->date()->format('Y-m-d H:i:s'),
+        ];
     }
 }

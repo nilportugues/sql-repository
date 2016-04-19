@@ -369,4 +369,31 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
 
         return $query->getConnection()->executeQuery($sql, $query->getParameters());
     }
+
+    /**
+     * Returns all instances of the type meeting $distinctFields values.
+     *
+     * @param Fields      $distinctFields
+     * @param Filter|null $filter
+     * @param Sort|null   $sort
+     *
+     * @return array
+     */
+    public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null)
+    {
+        // TODO: Implement findByDistinct() method.
+    }
+
+    /**
+     * Repository data is added or removed as a whole block.
+     * Must work or fail and rollback any persisted/erased data.
+     *
+     * @param callable $transaction
+     *
+     * @throws \Exception
+     */
+    public function transactional(callable $transaction)
+    {
+        // TODO: Implement transactional() method.
+    }
 }
