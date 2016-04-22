@@ -2,6 +2,7 @@
 
 namespace NilPortugues\Tests\Foundation\Infrastructure\Model\Repository\Sql;
 
+use DateTime;
 use NilPortugues\Foundation\Domain\Model\Repository\Fields;
 use NilPortugues\Foundation\Domain\Model\Repository\Filter;
 use NilPortugues\Foundation\Domain\Model\Repository\Order;
@@ -147,6 +148,21 @@ class SqlRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, count($results));
     }
+
+    public function testItCanUpdateAnExistingcustomer()
+    {
+        $expected = $this->repository->find(new CustomerId(4));
+        $expected->setName('Homer Simpson');
+        $expected->setDate(new DateTime('2010-12-10'));
+        $expected->setTotalOrders(4);
+        $expected->setTotalEarnings(69158.687);
+
+        $this->repository->add($expected);
+
+        $customer = $this->repository->find(new CustomerId(4));
+        $this->assertEquals('Homer Simpson', $customer->name());
+    }
+
 
     public function tearDown()
     {
