@@ -1,6 +1,6 @@
 <?php
 
-namespace NilPortugues\Tests;
+namespace NilPortugues\Tests\Foundation;
 
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
 
@@ -100,18 +100,18 @@ class Customer implements Identity
     }
 
     /**
-     * @return int
-     */
-    public function id()
-    {
-        return $this->id;
-    }
-
-    /**
      * @return string
      */
     public function __toString()
     {
         return (string) $this->id();
+    }
+
+    /**
+     * @return int
+     */
+    public function id()
+    {
+        return $this->id;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace NilPortugues\Tests;
+namespace NilPortugues\Tests\Foundation;
 
 use NilPortugues\Foundation\Infrastructure\Model\Repository\Sql\SqlMapping;
 
@@ -34,10 +34,11 @@ class CustomerMapping extends SqlMapping
     public function map()
     {
         return [
-            'customer_name',
-            'total_orders',
-            'total_earnings',
-            'created_at',
+            'id' => 'customer_id',
+            'name' => 'customer_name',
+            'totalOrders' => 'total_orders',
+            'totalEarnings' => 'total_earnings',
+            'date' => 'created_at',
         ];
     }
 
@@ -48,11 +49,15 @@ class CustomerMapping extends SqlMapping
      */
     public function fromArray(array $data)
     {
+        if (empty($data)) {
+            return;
+        }
+
         return new Customer(
-            $data['customer_id'],
-            $data['customer_name'],
-            $data['total_orders'],
-            $data['total_earnings'],
+            !empty($data['customer_id']) ? $data['customer_id'] : '',
+            !empty($data['customer_name']) ? $data['customer_name'] : '',
+            !empty($data['total_orders']) ? $data['total_orders'] : '',
+            !empty($data['total_earnings']) ? $data['total_earnings'] : '',
             new \DateTime($data['created_at'])
         );
     }

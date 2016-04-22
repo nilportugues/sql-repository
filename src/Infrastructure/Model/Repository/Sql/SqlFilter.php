@@ -108,13 +108,13 @@ class SqlFilter
     ) {
         foreach ($filters as $filterName => $valuePair) {
             foreach ($valuePair as $key => $value) {
-                self::guardColumnExists($columns, $key);
-                $key = $columns[$key];
+                $key = self::fetchColumnName($columns, $key);
 
                 if (is_array($value) && count($value) > 0) {
                     if (count($value) > 1) {
                         switch ($filterName) {
                             case BaseFilter::RANGES:
+
                                 $first = self::nextPlaceholder($placeholders, $operator, $isNot);
                                 $placeholders[$first] = $value[0];
 
@@ -209,13 +209,15 @@ class SqlFilter
      * @param $columns
      * @param $propertyName
      *
-     * @return mixed
+     * @return int
      */
-    protected static function guardColumnExists(array &$columns, $propertyName)
+    protected static function fetchColumnName(array &$columns, $propertyName)
     {
-        if (empty($columns[$propertyName])) {
-            throw new \RuntimeException(sprintf('Property %s has associated column.', $propertyName));
+        if (false !== ($pos = array_search($propertyName, $columns, true))) {
+            throw new \RuntimeException(sprintf('Property %s has no associated column.', $propertyName));
         }
+
+        return array_values($columns)[$pos];
     }
 
     /**

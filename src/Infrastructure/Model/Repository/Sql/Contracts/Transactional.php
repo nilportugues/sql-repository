@@ -13,6 +13,8 @@ namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql\Contracts;
 interface Transactional
 {
     public function beginTransaction();
+
     public function rollback();
+
     public function commit();
 }

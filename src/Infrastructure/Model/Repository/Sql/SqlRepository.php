@@ -22,8 +22,8 @@ use NilPortugues\Foundation\Domain\Model\Repository\Contracts\ReadRepository;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Sort;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\WriteRepository;
 use NilPortugues\Foundation\Domain\Model\Repository\Filter as DomainFilter;
+use NilPortugues\Foundation\Domain\Model\Repository\Page as ResultPage;
 use PDO;
-use PDOException;
 
 class SqlRepository implements ReadRepository, WriteRepository, PageRepository
 {
@@ -55,7 +55,9 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     public function find(Identity $id, Fields $fields = null)
     {
-        return (array) $this->selectOneQuery($id->id(), ($fields) ? $this->getColumns($fields) : $fields);
+        $result = $this->selectOneQuery($id->id(), ($fields) ? $this->getColumns($fields) : $fields);
+
+        return ($result) ? $result : [];
     }
 
     /**
@@ -68,7 +70,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     {
         $query = $this->queryBuilder();
 
-        return (array) $query
+        return $query
             ->select(($fields) ? $fields : ['*'])
             ->from($this->mapping->name())
             ->andWhere($query->expr()->eq($this->mapping->identity(), ':id'))
@@ -96,6 +98,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
 
         foreach ($this->mapping->map() as $objectProperty => $tableColumn) {
             if (in_array($objectProperty, $fields->get())) {
+                //@todo alias: .' AS '.$objectProperty; It affects mapping.
                 $newFields[$objectProperty] = $tableColumn;
             }
         }
@@ -113,7 +116,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     public function exists(Identity $id)
     {
         $filter = new DomainFilter();
-        $filter->must()->equals($this->mapping->identity(), $id->id());
+        $filter->must()->equal($this->mapping->identity(), $id->id());
 
         return $this->count($filter) > 0;
     }
@@ -161,25 +164,28 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     protected function insertQuery(Identity $value)
     {
-        $fields = [];
         $query = $this->queryBuilder();
         $object = $this->mapping->toArray($value);
 
-        foreach ($this->mapping->map() as $objectProperty => $sqlColumn) {
-            if (false === array_key_exists($objectProperty, $object)) {
+        $mappings = $this->mapping->map();
+        if (false !== ($pos = array_search($this->mapping->identity(), $mappings, true))) {
+            unset($mappings[$pos]);
+        }
+
+        foreach ($mappings as $objectProperty => $sqlColumn) {
+            if (false === array_key_exists($sqlColumn, $object)) {
                 throw new \RuntimeException(
-                    sprintf('Object of class %s has no property %s', get_class($value), $objectProperty)
+                    sprintf('Column %s not mapped for class %s.', $sqlColumn, get_class($value))
                 );
             }
 
             $placeholder = ':'.$sqlColumn;
-            $fields[$sqlColumn] = $placeholder;
-            $query->setParameter($placeholder, $object[$objectProperty]);
+            $query->setValue($sqlColumn, $placeholder);
+            $query->setParameter($placeholder, $object[$sqlColumn]);
         }
 
         $query
             ->insert($this->mapping->name())
-            ->values($fields)
             ->execute();
     }
 
@@ -201,28 +207,32 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         }
 
         $alreadyExistingRows = $this->fetchExistingRows($ids);
-        $transactionalQueries = $this->queryBuilder();
 
-        try {
-            $transactionalQueries->getConnection()->beginTransaction();
-
-            /** @var Identity $value */
-            foreach ($values as $value) {
-                if (false !== in_array($value->id(), $alreadyExistingRows)) {
+        /** @var Identity $value */
+        foreach ($values as $value) {
+            foreach ($alreadyExistingRows as $row) {
+                if ($value->id() == $row[$this->mapping->identity()]) {
                     $this->updateQuery($value);
                     continue;
                 }
                 $this->insertQuery($value);
             }
+        }
 
-            $transactionalQueries->getConnection()->commit();
-        } catch (PDOException $e) {
-            $transactionalQueries->getConnection()->rollBack();
-            throw $e;
+        $mapping = array_flip($this->mapping->map());
+
+        if (empty($mapping[$this->mapping->identity()])) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Could not find primary key %s for %s',
+                    $this->mapping->identity(),
+                    $this->mapping->name()
+                )
+            );
         }
 
         $filter = new DomainFilter();
-        $filter->must()->includesGroup($this->mapping->identity(), $ids);
+        $filter->must()->includeGroup($mapping[$this->mapping->identity()], $ids);
 
         return $this->findBy($filter);
     }
@@ -249,26 +259,30 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     protected function updateQuery(Identity $value)
     {
-        $fields = [];
         $query = $this->queryBuilder();
         $object = $this->mapping->toArray($value);
 
-        foreach ($this->mapping->map() as $objectProperty => $sqlColumn) {
-            if (false === array_key_exists($objectProperty, $object)) {
+        $mappings = $this->mapping->map();
+        if (false !== ($pos = array_search($this->mapping->identity(), $mappings, true))) {
+            unset($mappings[$pos]);
+        }
+
+        foreach ($mappings as $objectProperty => $sqlColumn) {
+            if (false === array_key_exists($sqlColumn, $object)) {
                 throw new \RuntimeException(
-                    sprintf('Object of class %s has no property %s', get_class($value), $objectProperty)
+                    sprintf('Column %s not mapped for class %s.', $sqlColumn, get_class($value))
                 );
             }
 
             $placeholder = ':'.$sqlColumn;
-            $fields[$sqlColumn] = $placeholder;
-            $query->setParameter($placeholder, $value->$objectProperty());
+            $query->set($sqlColumn, $placeholder);
+            $query->setParameter($placeholder, $object[$sqlColumn]);
         }
 
         $query
             ->update($this->mapping->name())
-            ->values($fields)
-            ->where($query->expr()->eq($this->mapping->identity(), $value->id()))
+            ->where($query->expr()->eq($this->mapping->identity(), ':id'))
+            ->setParameter(':id', $value->id())
             ->execute();
     }
 
@@ -296,8 +310,6 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         if ($sort) {
             SqlSorter::sort($query, $sort, $this->mapping);
         }
-
-      //  echo $query->getSQL(); die();
 
         return $query->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -350,24 +362,56 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     {
         $query = $this->queryBuilder();
 
+        if ($pageable) {
+            $columns = ($fields = $pageable->fields()) ? $this->getColumns($fields) : ['*'];
+
+            if (count($distinctFields = $pageable->distinctFields()->get()) > 0) {
+                $columns = $this->getColumns($pageable->distinctFields());
+                if (empty($columns)) {
+                    $columns = ['*'];
+                }
+
+                $columns = 'DISTINCT '.implode(', ', $columns);
+            }
+
+            $query
+                ->select($columns)
+                ->from($this->mapping->name());
+
+            if ($filter = $pageable->filters()) {
+                SqlFilter::filter($query, $filter, $this->mapping);
+            }
+
+            if ($sort = $pageable->sortings()) {
+                SqlSorter::sort($query, $sort, $this->mapping);
+            }
+
+            $total = $this->count($pageable->filters());
+
+            return new ResultPage(
+                $query->getConnection()->executeQuery(
+                    sprintf($query->getSQL().' LIMIT %s, %s',
+                        (int) ($pageable->offset() - $pageable->pageSize()),
+                        (int) $pageable->pageSize()
+                    ),
+                    $query->getParameters()
+                )->fetchAll(PDO::FETCH_ASSOC),
+                $total,
+                $pageable->pageNumber(),
+                ceil($total / $pageable->pageSize())
+            );
+        }
+
         $query
             ->select(($fields = $pageable->fields()) ? $this->getColumns($fields) : ['*'])
             ->from($this->mapping->name());
 
-        if ($filter = $pageable->filters()) {
-            SqlFilter::filter($query, $filter, $this->mapping);
-        }
-
-        if ($sort = $pageable->sortings()) {
-            SqlSorter::sort($query, $sort, $this->mapping);
-        }
-
-        $sql = sprintf($query->getSQL().' LIMIT %s, %s',
-            (int) ($pageable->offset() - $pageable->pageSize()),
-            (int) $pageable->pageSize()
+        return new ResultPage(
+            $query->getConnection()->executeQuery($query->getSQL(), $query->getParameters())->fetchAll(PDO::FETCH_ASSOC),
+            $this->count(),
+            1,
+            1
         );
-
-        return $query->getConnection()->executeQuery($sql, $query->getParameters());
     }
 
     /**
@@ -381,7 +425,21 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null)
     {
-        // TODO: Implement findByDistinct() method.
+        $query = $this->queryBuilder();
+
+        $query
+            ->select(($distinctFields) ? 'DISTINCT '.implode(', ', $this->getColumns($distinctFields)) : ['DISTINCT *'])
+            ->from($this->mapping->name());
+
+        if ($filter) {
+            SqlFilter::filter($query, $filter, $this->mapping);
+        }
+
+        if ($sort) {
+            SqlSorter::sort($query, $sort, $this->mapping);
+        }
+
+        return $query->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -394,6 +452,15 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     public function transactional(callable $transaction)
     {
-        // TODO: Implement transactional() method.
+        $queryBuilder = $this->queryBuilder();
+
+        try {
+            $queryBuilder->getConnection()->beginTransaction();
+            $transaction();
+            $queryBuilder->getConnection()->commit();
+        } catch (\Exception $e) {
+            $queryBuilder->getConnection()->rollBack();
+            throw $e;
+        }
     }
 }

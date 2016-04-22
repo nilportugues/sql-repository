@@ -26,12 +26,14 @@ class SqlSorter
      */
     public static function sort(QueryBuilder $queryBuilder, SortInterface $sort, SqlMapping $mapping)
     {
-        /* @var Order $order */
         $columns = $mapping->map();
 
         foreach ($sort->orders() as $propertyName => $order) {
             self::guardColumnExists($columns, $propertyName);
-            $queryBuilder->orderBy($columns[$propertyName], $order->isAscending() ? Order::ASCENDING : Order::DESCENDING);
+            $queryBuilder->orderBy(
+                $columns[$propertyName],
+                $order->isAscending() ? Order::ASCENDING : Order::DESCENDING
+            );
         }
     }
 
@@ -43,8 +45,8 @@ class SqlSorter
      */
     protected static function guardColumnExists($columns, $propertyName)
     {
-        if (empty($columns[$propertyName])) {
-            throw new \RuntimeException(sprintf('Property %s has associated column.', $propertyName));
+        if (false !== array_search($propertyName, $columns, true)) {
+            throw new \RuntimeException(sprintf('Property %s has no associated column.', $propertyName));
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace NilPortugues\Tests;
+namespace NilPortugues\Tests\Foundation;
 
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
 
