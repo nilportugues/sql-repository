@@ -154,8 +154,11 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     public function add(Identity $value)
     {
-        //@todo: implement update.
-        $this->insertQuery($value);
+        try {
+            $this->updateQuery($value);
+        } catch (\PDOException $e) {
+            $this->insertQuery($value);
+        }
 
         return $this->selectOneQuery($value->id());
     }
@@ -196,8 +199,6 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      * @param array $values
      *
      * @return mixed
-     *
-     * @throws PDOException
      */
     public function addAll(array $values)
     {
