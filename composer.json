@@ -1,7 +1,7 @@
 {
-  "name": "nilportugues/Sql-repository",
+  "name": "nilportugues/sql-repository",
   "description": "SQL Repository implementation",
-  "keywords": ["file", "repository", "cache", "ddd", "hexagonal", "ports and adapters", "ports", "adapters", "repository", "pageable", "pagination", "nil portugues", "nilportugues"],
+  "keywords": ["sql", "repository", "dbal", "doctrine", "doctrine", "hexagonal", "ports and adapters", "ports", "adapters", "pageable", "pagination", "nil portugues", "nilportugues"],
   "type": "library",
   "homepage": "http://nilportugues.com",
   "license": "MIT",
@@ -33,6 +33,6 @@
     }
   },
   "suggest": {
-    "nilportugues/repository-cache": "1.0.*"
+    "nilportugues/repository-cache": "Cache database queries to improve performance."
   }
 }
