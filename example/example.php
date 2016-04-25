@@ -31,8 +31,8 @@ print_r($repository->find($userId));
 echo PHP_EOL;
 
 $filter = new Filter();
-$filter->must()->greaterThanOrEqual('registeredOn', '2016-01-01 00:00:00');
-$filter->must()->lessThan('registeredOn', '2016-02-01 00:00:00');
+$filter->must()->beGreaterThanOrEqual('registeredOn', '2016-01-01 00:00:00');
+$filter->must()->beLessThan('registeredOn', '2016-02-01 00:00:00');
 
 $sort = new Sort();
 $sort->setOrderFor('registeredOn', new Order('ASC'));
