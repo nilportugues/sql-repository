@@ -364,7 +364,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
             $columns = (!empty($fields)) ? $fields : ['*'];
 
             if (count($distinctFields = $pageable->distinctFields()->get()) > 0) {
-                $columns = $this->getColumns($pageable->distinctFields());
+                $columns = $this->getColumns($distinctFields);
                 if (empty($columns)) {
                     $columns = ['*'];
                 }
