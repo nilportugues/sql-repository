@@ -109,33 +109,33 @@ class SqlFilter
         foreach ($filters as $filterName => $valuePair) {
             foreach ($valuePair as $key => $value) {
                 $key = self::fetchColumnName($columns, $key);
-
                 if (is_array($value) && count($value) > 0) {
-                    if (count($value) > 1) {
+                    $value = array_values($value);
+                    if (count($value[0]) > 1) {
                         switch ($filterName) {
                             case BaseFilter::RANGES:
-
                                 $first = self::nextPlaceholder($placeholders, $operator, $isNot);
-                                $placeholders[$first] = $value[0];
+                                $placeholders[$first] = $value[0][0];
 
                                 $second = self::nextPlaceholder($placeholders, $operator, $isNot);
-                                $placeholders[$second] = $value[1];
+                                $placeholders[$second] = $value[0][1];
 
                                 $op = (!$isNot) ? 'BETWEEN' : 'NOT BETWEEN';
-                                $query->$operator(sprintf('%s %s % AND %s', $key, $op, $first, $second));
+                                $query->$operator(sprintf('%s %s %s AND %s', $key, $op, $first, $second));
                                 break;
-
                             case BaseFilter::NOT_RANGES:
                                 $first = self::nextPlaceholder($placeholders, $operator, $isNot);
-                                $placeholders[$first] = $value[0];
+                                $placeholders[$first] = $value[0][0];
 
                                 $second = self::nextPlaceholder($placeholders, $operator, $isNot);
-                                $placeholders[$second] = $value[1];
+                                $placeholders[$second] = $value[0][1];
 
                                 $op = (!$isNot) ? 'NOT BETWEEN' : 'BETWEEN';
-                                $query->$operator(sprintf('%s %s % AND %s', $key, $op, $first, $second));
+                                $query->$operator(sprintf('%s %s %s AND %s', $key, $op, $first, $second));
                                 break;
-
+                        }
+                    } else {
+                        switch ($filterName) {
                             case BaseFilter::GROUP:
                                 $names = [];
                                 foreach ($value as $k => $v) {
@@ -144,15 +144,26 @@ class SqlFilter
                                     $placeholders[$nextPlaceholder] = $v;
                                 }
 
-                                $op = ($isNot) ? 'notIn' : 'in';
+                                $op = (!$isNot) ? 'in' : 'notIn';
+                                $query->$operator($query->expr()->$op($key, $names));
+                                break;
+                            case BaseFilter::NOT_GROUP:
+                                $names = [];
+                                foreach ($value as $k => $v) {
+                                    $nextPlaceholder = self::nextPlaceholder($placeholders, $operator, $isNot);
+                                    $names[] = $nextPlaceholder;
+                                    $placeholders[$nextPlaceholder] = $v;
+                                }
+
+                                $op = (!$isNot) ? 'notIn' : 'in';
                                 $query->$operator($query->expr()->$op($key, $names));
                                 break;
                         }
-                        break;
                     }
-                    $value = array_shift($value);
                 }
 
+                $value = (array) $value;
+                $value = array_shift($value);
                 $nextPlaceholder = self::nextPlaceholder($placeholders, $operator, $isNot);
 
                 switch ($filterName) {
@@ -173,23 +184,23 @@ class SqlFilter
                         self::query($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::CONTAINS:
-                        $op = ($isNot) ? 'NOT LIKE' : 'LIKE';
+                        $op = (!$isNot) ? 'LIKE' : 'NOT LIKE';
                         $value = '%'.$value.'%';
                         self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::NOT_CONTAINS:
-                        $op = ($isNot) ? 'LIKE' : 'NOT LIKE';
+                        $op = (!$isNot) ? 'NOT LIKE' : 'LIKE';
                         $value = '%'.$value.'%';
                         self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::STARTS_WITH:
-                        $op = ($isNot) ? 'LIKE' : 'NOT LIKE';
-                        $value = '%'.$value;
+                        $op = (!$isNot) ? 'LIKE' : 'NOT LIKE';
+                        $value = $value.'%';
                         self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::ENDS_WITH:
-                        $op = ($isNot) ? 'LIKE' : 'NOT LIKE';
-                        $value = $value.'%';
+                        $op = (!$isNot) ? 'LIKE' : 'NOT LIKE';
+                        $value = '%'.$value;
                         self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::EQUALS:
@@ -213,11 +224,11 @@ class SqlFilter
      */
     protected static function fetchColumnName(array &$columns, $propertyName)
     {
-        if (false !== ($pos = array_search($propertyName, $columns, true))) {
+        if (empty($columns[$propertyName])) {
             throw new \RuntimeException(sprintf('Property %s has no associated column.', $propertyName));
         }
 
-        return array_values($columns)[$pos];
+        return $columns[$propertyName];
     }
 
     /**

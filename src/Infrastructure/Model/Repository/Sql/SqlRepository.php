@@ -98,7 +98,6 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
 
         foreach ($this->mapping->map() as $objectProperty => $tableColumn) {
             if (in_array($objectProperty, $fields->get())) {
-                //@todo alias: .' AS '.$objectProperty; It affects mapping.
                 $newFields[$objectProperty] = $tableColumn;
             }
         }
@@ -115,10 +114,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     public function exists(Identity $id)
     {
-        $filter = new DomainFilter();
-        $filter->must()->equal($this->mapping->identity(), $id->id());
-
-        return $this->count($filter) > 0;
+        return !empty($this->find($id));
     }
 
     /**
@@ -326,9 +322,8 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         $query = $this->queryBuilder();
 
         $query
-            ->delete()
-            ->from($this->mapping->name())
-            ->andWhere($query->expr()->eq($this->mapping->identity(), ':id'))
+            ->delete($this->mapping->name())
+            ->where($query->expr()->eq($this->mapping->identity(), ':id'))
             ->setParameter(':id', $id->id())
             ->execute();
     }
@@ -344,7 +339,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     public function removeAll(Filter $filter = null)
     {
         $query = $this->queryBuilder();
-        $query->delete()->from($this->mapping->name());
+        $query->delete($this->mapping->name());
 
         if ($filter) {
             SqlFilter::filter($query, $filter, $this->mapping);
@@ -365,7 +360,8 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         $query = $this->queryBuilder();
 
         if ($pageable) {
-            $columns = ($fields = $pageable->fields()) ? $this->getColumns($fields) : ['*'];
+            $fields = $this->getColumns($pageable->fields());
+            $columns = (!empty($fields)) ? $fields : ['*'];
 
             if (count($distinctFields = $pageable->distinctFields()->get()) > 0) {
                 $columns = $this->getColumns($pageable->distinctFields());
@@ -405,7 +401,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         }
 
         $query
-            ->select(($fields = $pageable->fields()) ? $this->getColumns($fields) : ['*'])
+            ->select('*')
             ->from($this->mapping->name());
 
         return new ResultPage(
