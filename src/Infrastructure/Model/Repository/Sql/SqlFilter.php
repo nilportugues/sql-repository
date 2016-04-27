@@ -125,26 +125,12 @@ class SqlFilter
                     } else {
                         switch ($filterName) {
                             case BaseFilter::GROUP:
-                                $names = [];
-                                foreach ($value as $k => $v) {
-                                    $nextPlaceholder = self::nextPlaceholder($placeholders, $operator, $isNot);
-                                    $names[] = $nextPlaceholder;
-                                    $placeholders[$nextPlaceholder] = $v;
-                                }
-
                                 $op = (!$isNot) ? 'in' : 'notIn';
-                                $query->$operator($query->expr()->$op($key, $names));
+                                self::inGroupQuery($placeholders, $query, $operator, $key, $op, $value, $isNot);
                                 break;
                             case BaseFilter::NOT_GROUP:
-                                $names = [];
-                                foreach ($value as $k => $v) {
-                                    $nextPlaceholder = self::nextPlaceholder($placeholders, $operator, $isNot);
-                                    $names[] = $nextPlaceholder;
-                                    $placeholders[$nextPlaceholder] = $v;
-                                }
-
                                 $op = (!$isNot) ? 'notIn' : 'in';
-                                $query->$operator($query->expr()->$op($key, $names));
+                                self::inGroupQuery($placeholders, $query, $operator, $key, $op, $value, $isNot);
                                 break;
                         }
                     }
@@ -303,5 +289,33 @@ class SqlFilter
         $placeholders[$second] = $value[0][1];
 
         $query->$operator(sprintf('%s %s %s AND %s', $key, $op, $first, $second));
+    }
+
+    /**
+     * @param array $placeholders
+     * @param QueryBuilder $query
+     * @param string $operator
+     * @param string $key
+     * @param string $op
+     * @param $value
+     * @param bool $isNot
+     */
+    protected static function inGroupQuery(
+        array &$placeholders,
+        QueryBuilder $query,
+        $operator,
+        $key,
+        $op,
+        $value,
+        $isNot
+    ) {
+        $names = [];
+        foreach ($value as $k => $v) {
+            $nextPlaceholder = self::nextPlaceholder($placeholders, $operator, $isNot);
+            $names[] = $nextPlaceholder;
+            $placeholders[$nextPlaceholder] = $v;
+        }
+
+        $query->$operator($query->expr()->$op($key, $names));
     }
 }
