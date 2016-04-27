@@ -46,6 +46,7 @@ class UserMapping extends SqlMapping
     public function map()
     {
         return [
+            'userId' => 'user_id',
             'username' => 'username',
             'alias' => 'public_username',
             'email' => 'email',
@@ -61,10 +62,11 @@ class UserMapping extends SqlMapping
     public function toArray($object)
     {
         return [
+            'user_id' => $object->id(),
             'username' => $object->username(),
-            'alias' => $object->alias(),
+            'public_username' => $object->alias(),
             'email' => $object->email(),
-            'registeredOn' => $object->registeredOn()->format('Y-m-d H:i:s'),
+            'created_at' => $object->registeredOn()->format('Y-m-d H:i:s'),
         ];
     }
 
@@ -78,6 +80,7 @@ class UserMapping extends SqlMapping
         if (empty($data)) {
             return;
         }
+
 
         return new User(
             $data['user_id'],

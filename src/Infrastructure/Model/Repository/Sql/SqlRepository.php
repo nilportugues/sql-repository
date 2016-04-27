@@ -24,6 +24,7 @@ use NilPortugues\Foundation\Domain\Model\Repository\Contracts\WriteRepository;
 use NilPortugues\Foundation\Domain\Model\Repository\Filter as DomainFilter;
 use NilPortugues\Foundation\Domain\Model\Repository\Page as ResultPage;
 use PDO;
+use PDOException;
 
 class SqlRepository implements ReadRepository, WriteRepository, PageRepository
 {
@@ -152,7 +153,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     {
         try {
             $this->updateQuery($value);
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             $this->insertQuery($value);
         }
 
@@ -254,6 +255,8 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
 
     /**
      * @param Identity $value
+     *
+     * @throws PDOException
      */
     protected function updateQuery(Identity $value)
     {
@@ -277,11 +280,22 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
             $query->setParameter($placeholder, $object[$sqlColumn]);
         }
 
-        $query
+        $affectedRows = $query
             ->update($this->mapping->name())
             ->where($query->expr()->eq($this->mapping->identity(), ':id'))
             ->setParameter(':id', $value->id())
             ->execute();
+
+        if (0 === $affectedRows) {
+            throw new PDOException(
+                sprintf(
+                    'Could not update %s where %s = %s',
+                    $this->mapping->name(),
+                    $this->mapping->identity(),
+                    $value->id()
+                )
+            );
+        }
     }
 
     /**
