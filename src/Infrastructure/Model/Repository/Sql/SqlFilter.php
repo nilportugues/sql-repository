@@ -114,24 +114,12 @@ class SqlFilter
                     if (count($value[0]) > 1) {
                         switch ($filterName) {
                             case BaseFilter::RANGES:
-                                $first = self::nextPlaceholder($placeholders, $operator, $isNot);
-                                $placeholders[$first] = $value[0][0];
-
-                                $second = self::nextPlaceholder($placeholders, $operator, $isNot);
-                                $placeholders[$second] = $value[0][1];
-
                                 $op = (!$isNot) ? 'BETWEEN' : 'NOT BETWEEN';
-                                $query->$operator(sprintf('%s %s %s AND %s', $key, $op, $first, $second));
+                                self::rangeQuery($placeholders, $query, $operator, $key, $op, $value, $isNot);
                                 break;
                             case BaseFilter::NOT_RANGES:
-                                $first = self::nextPlaceholder($placeholders, $operator, $isNot);
-                                $placeholders[$first] = $value[0][0];
-
-                                $second = self::nextPlaceholder($placeholders, $operator, $isNot);
-                                $placeholders[$second] = $value[0][1];
-
                                 $op = (!$isNot) ? 'NOT BETWEEN' : 'BETWEEN';
-                                $query->$operator(sprintf('%s %s %s AND %s', $key, $op, $first, $second));
+                                self::rangeQuery($placeholders, $query, $operator, $key, $op, $value, $isNot);
                                 break;
                         }
                     } else {
@@ -288,5 +276,32 @@ class SqlFilter
     ) {
         $query->$operator(sprintf('%s %s %s', $key, $op, $nextPlaceholder));
         $placeholders[$nextPlaceholder] = $value;
+    }
+
+    /**
+     * @param array        $placeholders
+     * @param QueryBuilder $query
+     * @param string       $operator
+     * @param string       $key
+     * @param string       $op
+     * @param $value
+     * @param bool $isNot
+     */
+    protected static function rangeQuery(
+        array &$placeholders,
+        QueryBuilder $query,
+        $operator,
+        $key,
+        $op,
+        $value,
+        $isNot
+    ) {
+        $first = self::nextPlaceholder($placeholders, $operator, $isNot);
+        $placeholders[$first] = $value[0][0];
+
+        $second = self::nextPlaceholder($placeholders, $operator, $isNot);
+        $placeholders[$second] = $value[0][1];
+
+        $query->$operator(sprintf('%s %s %s AND %s', $key, $op, $first, $second));
     }
 }
