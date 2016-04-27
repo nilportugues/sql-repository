@@ -292,11 +292,11 @@ class SqlFilter
     }
 
     /**
-     * @param array $placeholders
+     * @param array        $placeholders
      * @param QueryBuilder $query
-     * @param string $operator
-     * @param string $key
-     * @param string $op
+     * @param string       $operator
+     * @param string       $key
+     * @param string       $op
      * @param $value
      * @param bool $isNot
      */

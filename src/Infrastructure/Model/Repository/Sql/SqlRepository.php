@@ -11,6 +11,7 @@
 namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Query\QueryBuilder;
 use NilPortugues\Assert\Assert;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Fields;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Filter;
@@ -166,24 +167,8 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     protected function insertQuery(Identity $value)
     {
         $query = $this->queryBuilder();
-        $object = $this->mapping->toArray($value);
 
-        $mappings = $this->mapping->map();
-        if (false !== ($pos = array_search($this->mapping->identity(), $mappings, true))) {
-            unset($mappings[$pos]);
-        }
-
-        foreach ($mappings as $objectProperty => $sqlColumn) {
-            if (false === array_key_exists($sqlColumn, $object)) {
-                throw new \RuntimeException(
-                    sprintf('Column %s not mapped for class %s.', $sqlColumn, get_class($value))
-                );
-            }
-
-            $placeholder = ':'.$sqlColumn;
-            $query->setValue($sqlColumn, $placeholder);
-            $query->setParameter($placeholder, $object[$sqlColumn]);
-        }
+        $this->populateQuery($query, $value, true);
 
         $query
             ->insert($this->mapping->name())
@@ -261,24 +246,8 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     protected function updateQuery(Identity $value)
     {
         $query = $this->queryBuilder();
-        $object = $this->mapping->toArray($value);
 
-        $mappings = $this->mapping->map();
-        if (false !== ($pos = array_search($this->mapping->identity(), $mappings, true))) {
-            unset($mappings[$pos]);
-        }
-
-        foreach ($mappings as $objectProperty => $sqlColumn) {
-            if (false === array_key_exists($sqlColumn, $object)) {
-                throw new \RuntimeException(
-                    sprintf('Column %s not mapped for class %s.', $sqlColumn, get_class($value))
-                );
-            }
-
-            $placeholder = ':'.$sqlColumn;
-            $query->set($sqlColumn, $placeholder);
-            $query->setParameter($placeholder, $object[$sqlColumn]);
-        }
+        $this->populateQuery($query, $value, false);
 
         $affectedRows = $query
             ->update($this->mapping->name())
@@ -295,6 +264,34 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
                     $value->id()
                 )
             );
+        }
+    }
+
+    /**
+     * @param QueryBuilder $query
+     * @param Identity     $value
+     * @param bool         $isInsert
+     */
+    protected function populateQuery(QueryBuilder $query, Identity $value, $isInsert)
+    {
+        $mappings = $this->mapping->map();
+        if (false !== ($pos = array_search($this->mapping->identity(), $mappings, true))) {
+            unset($mappings[$pos]);
+        }
+
+        $object = $this->mapping->toArray($value);
+        $setOperation = ($isInsert) ? 'setValue' : 'set';
+
+        foreach ($mappings as $objectProperty => $sqlColumn) {
+            if (false === array_key_exists($sqlColumn, $object)) {
+                throw new \RuntimeException(
+                    sprintf('Column %s not mapped for class %s.', $sqlColumn, get_class($value))
+                );
+            }
+
+            $placeholder = ':'.$sqlColumn;
+            $query->$setOperation($sqlColumn, $placeholder);
+            $query->setParameter($placeholder, $object[$sqlColumn]);
         }
     }
 
