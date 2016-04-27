@@ -114,22 +114,26 @@ class SqlFilter
                     if (count($value[0]) > 1) {
                         switch ($filterName) {
                             case BaseFilter::RANGES:
-                                $op = (!$isNot) ? 'BETWEEN' : 'NOT BETWEEN';
-                                self::rangeQuery($placeholders, $query, $operator, $key, $op, $value, $isNot);
-                                break;
                             case BaseFilter::NOT_RANGES:
-                                $op = (!$isNot) ? 'NOT BETWEEN' : 'BETWEEN';
+                                $op = (!$isNot) ? 'BETWEEN' : 'NOT BETWEEN';
+
+                                if ($filterName === BaseFilter::NOT_RANGES) {
+                                    $op = (!$isNot) ? 'NOT BETWEEN' : 'BETWEEN';
+                                }
+
                                 self::rangeQuery($placeholders, $query, $operator, $key, $op, $value, $isNot);
                                 break;
                         }
                     } else {
                         switch ($filterName) {
                             case BaseFilter::GROUP:
-                                $op = (!$isNot) ? 'in' : 'notIn';
-                                self::inGroupQuery($placeholders, $query, $operator, $key, $op, $value, $isNot);
-                                break;
                             case BaseFilter::NOT_GROUP:
-                                $op = (!$isNot) ? 'notIn' : 'in';
+                                $op = (!$isNot) ? 'in' : 'notIn';
+
+                                if ($filterName === BaseFilter::NOT_GROUP) {
+                                    $op = (!$isNot) ? 'notIn' : 'in';
+                                }
+
                                 self::inGroupQuery($placeholders, $query, $operator, $key, $op, $value, $isNot);
                                 break;
                         }
@@ -158,31 +162,29 @@ class SqlFilter
                         self::query($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::CONTAINS:
-                        $op = (!$isNot) ? 'LIKE' : 'NOT LIKE';
-                        $value = '%'.$value.'%';
-                        self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
-                        break;
                     case BaseFilter::NOT_CONTAINS:
-                        $op = (!$isNot) ? 'NOT LIKE' : 'LIKE';
                         $value = '%'.$value.'%';
+                        $op = (!$isNot) ? 'LIKE' : 'NOT LIKE';
+                        if ($filterName === BaseFilter::NOT_CONTAINS) {
+                            $op = (!$isNot) ? 'NOT LIKE' : 'LIKE';
+                        }
                         self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                     case BaseFilter::STARTS_WITH:
-                        $op = (!$isNot) ? 'LIKE' : 'NOT LIKE';
-                        $value = $value.'%';
-                        self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
-                        break;
                     case BaseFilter::ENDS_WITH:
                         $op = (!$isNot) ? 'LIKE' : 'NOT LIKE';
-                        $value = '%'.$value;
-                        self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
+                        $newValue = $value.'%';
+                        if ($filterName ===  BaseFilter::ENDS_WITH) {
+                            $newValue = '%'.$value;
+                        }
+                        self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $newValue);
                         break;
                     case BaseFilter::EQUALS:
-                        $op = (!$isNot) ? 'eq' : 'neq';
-                        self::query($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
-                        break;
                     case BaseFilter::NOT_EQUAL:
-                        $op = (!$isNot) ? 'neq' : 'eq';
+                        $op = (!$isNot) ? 'eq' : 'neq';
+                        if ($filterName === BaseFilter::NOT_EQUAL) {
+                            $op = (!$isNot) ? 'neq' : 'eq';
+                        }
                         self::query($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
                 }
