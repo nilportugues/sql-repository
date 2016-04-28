@@ -174,7 +174,7 @@ class SqlFilter
                     case BaseFilter::ENDS_WITH:
                         $op = (!$isNot) ? 'LIKE' : 'NOT LIKE';
                         $newValue = $value.'%';
-                        if ($filterName ===  BaseFilter::ENDS_WITH) {
+                        if ($filterName === BaseFilter::ENDS_WITH) {
                             $newValue = '%'.$value;
                         }
                         self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $newValue);
@@ -208,6 +208,33 @@ class SqlFilter
     }
 
     /**
+     * @param array        $placeholders
+     * @param QueryBuilder $query
+     * @param string       $operator
+     * @param string       $key
+     * @param string       $op
+     * @param $value
+     * @param bool $isNot
+     */
+    protected static function rangeQuery(
+        array &$placeholders,
+        QueryBuilder $query,
+        $operator,
+        $key,
+        $op,
+        $value,
+        $isNot
+    ) {
+        $first = self::nextPlaceholder($placeholders, $operator, $isNot);
+        $placeholders[$first] = $value[0][0];
+
+        $second = self::nextPlaceholder($placeholders, $operator, $isNot);
+        $placeholders[$second] = $value[0][1];
+
+        $query->$operator(sprintf('%s %s %s AND %s', $key, $op, $first, $second));
+    }
+
+    /**
      * @param array $placeholders
      * @param $operator
      * @param $isNot
@@ -220,6 +247,34 @@ class SqlFilter
         $isNot = ($isNot) ? 'n' : 'p';
 
         return ':k'.$operator.$isNot.count($placeholders);
+    }
+
+    /**
+     * @param array        $placeholders
+     * @param QueryBuilder $query
+     * @param string       $operator
+     * @param string       $key
+     * @param string       $op
+     * @param $value
+     * @param bool $isNot
+     */
+    protected static function inGroupQuery(
+        array &$placeholders,
+        QueryBuilder $query,
+        $operator,
+        $key,
+        $op,
+        $value,
+        $isNot
+    ) {
+        $names = [];
+        foreach ($value as $k => $v) {
+            $nextPlaceholder = self::nextPlaceholder($placeholders, $operator, $isNot);
+            $names[] = $nextPlaceholder;
+            $placeholders[$nextPlaceholder] = $v;
+        }
+
+        $query->$operator($query->expr()->$op($key, $names));
     }
 
     /**
@@ -264,60 +319,5 @@ class SqlFilter
     ) {
         $query->$operator(sprintf('%s %s %s', $key, $op, $nextPlaceholder));
         $placeholders[$nextPlaceholder] = $value;
-    }
-
-    /**
-     * @param array        $placeholders
-     * @param QueryBuilder $query
-     * @param string       $operator
-     * @param string       $key
-     * @param string       $op
-     * @param $value
-     * @param bool $isNot
-     */
-    protected static function rangeQuery(
-        array &$placeholders,
-        QueryBuilder $query,
-        $operator,
-        $key,
-        $op,
-        $value,
-        $isNot
-    ) {
-        $first = self::nextPlaceholder($placeholders, $operator, $isNot);
-        $placeholders[$first] = $value[0][0];
-
-        $second = self::nextPlaceholder($placeholders, $operator, $isNot);
-        $placeholders[$second] = $value[0][1];
-
-        $query->$operator(sprintf('%s %s %s AND %s', $key, $op, $first, $second));
-    }
-
-    /**
-     * @param array        $placeholders
-     * @param QueryBuilder $query
-     * @param string       $operator
-     * @param string       $key
-     * @param string       $op
-     * @param $value
-     * @param bool $isNot
-     */
-    protected static function inGroupQuery(
-        array &$placeholders,
-        QueryBuilder $query,
-        $operator,
-        $key,
-        $op,
-        $value,
-        $isNot
-    ) {
-        $names = [];
-        foreach ($value as $k => $v) {
-            $nextPlaceholder = self::nextPlaceholder($placeholders, $operator, $isNot);
-            $names[] = $nextPlaceholder;
-            $placeholders[$nextPlaceholder] = $v;
-        }
-
-        $query->$operator($query->expr()->$op($key, $names));
     }
 }
