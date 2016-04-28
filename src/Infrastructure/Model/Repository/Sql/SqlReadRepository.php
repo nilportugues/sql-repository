@@ -91,6 +91,6 @@ class SqlReadRepository extends BaseSqlRepository implements ReadRepository
      */
     public function exists(Identity $id)
     {
-        // TODO: Implement exists() method.
+        return $this->exists($id);
     }
 }
