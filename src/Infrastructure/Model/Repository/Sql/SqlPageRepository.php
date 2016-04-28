@@ -5,8 +5,8 @@ namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Page;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Pageable;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\PageRepository;
-use PDO;
 use NilPortugues\Foundation\Domain\Model\Repository\Page as ResultPage;
+use PDO;
 
 class SqlPageRepository extends BaseSqlRepository implements PageRepository
 {
@@ -22,17 +22,7 @@ class SqlPageRepository extends BaseSqlRepository implements PageRepository
         $query = $this->queryBuilder();
 
         if ($pageable) {
-            $fields = $this->getColumns($pageable->fields());
-            $columns = (!empty($fields)) ? $fields : ['*'];
-
-            if (count($pageable->distinctFields()->get()) > 0) {
-                $columns = $this->getColumns($pageable->distinctFields());
-                if (empty($columns)) {
-                    $columns = ['*'];
-                }
-
-                $columns = 'DISTINCT '.implode(', ', $columns);
-            }
+            $columns = $this->getPageColumns($pageable);
 
             $query
                 ->select($columns)
@@ -72,5 +62,27 @@ class SqlPageRepository extends BaseSqlRepository implements PageRepository
             1,
             1
         );
+    }
+
+    /**
+     * @param Pageable $pageable
+     *
+     * @return array|string
+     */
+    protected function getPageColumns(Pageable $pageable)
+    {
+        $fields = $this->getColumns($pageable->fields());
+        $columns = (!empty($fields)) ? $fields : ['*'];
+
+        if (count($pageable->distinctFields()->get()) > 0) {
+            $columns = $this->getColumns($pageable->distinctFields());
+            if (empty($columns)) {
+                $columns = ['*'];
+            }
+
+            $columns = 'DISTINCT '.implode(', ', $columns);
+        }
+
+        return $columns;
     }
 }

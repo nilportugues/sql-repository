@@ -3,14 +3,14 @@
 namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use NilPortugues\Assert\Assert;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Filter;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\WriteRepository;
+use NilPortugues\Foundation\Domain\Model\Repository\Filter as DomainFilter;
 use PDO;
 use PDOException;
 use RuntimeException;
-use NilPortugues\Assert\Assert;
-use NilPortugues\Foundation\Domain\Model\Repository\Filter as DomainFilter;
 
 class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
 {
@@ -146,12 +146,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
      */
     public function addAll(array $values)
     {
-        $ids = [];
-        foreach ($values as $value) {
-            Assert::isInstanceOf($value, Identity::class);
-            $ids[] = $value->id();
-        }
-
+        $ids = $this->fetchIds($values);
         $alreadyExistingRows = $this->fetchExistingRows($ids);
 
         /** @var Identity $value */
@@ -166,16 +161,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
         }
 
         $mapping = array_flip($this->mapping->map());
-
-        if (empty($mapping[$this->mapping->identity()])) {
-            throw new RuntimeException(
-                sprintf(
-                    'Could not find primary key %s for %s',
-                    $this->mapping->identity(),
-                    $this->mapping->name()
-                )
-            );
-        }
+        $this->guardMappedIdentity($mapping);
 
         $filter = new DomainFilter();
         $filter->must()->includeGroup($mapping[$this->mapping->identity()], $ids);
@@ -272,6 +258,39 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
         } catch (\Exception $e) {
             $queryBuilder->getConnection()->rollBack();
             throw $e;
+        }
+    }
+
+    /**
+     * @param array $values
+     *
+     * @return array
+     */
+    protected function fetchIds(array $values)
+    {
+        $ids = [];
+
+        foreach ($values as $value) {
+            Assert::isInstanceOf($value, Identity::class);
+            $ids[] = $value->id();
+        }
+
+        return $ids;
+    }
+
+    /**
+     * @param $mapping
+     */
+    protected function guardMappedIdentity(array &$mapping)
+    {
+        if (empty($mapping[$this->mapping->identity()])) {
+            throw new RuntimeException(
+                sprintf(
+                    'Could not find primary key %s for %s',
+                    $this->mapping->identity(),
+                    $this->mapping->name()
+                )
+            );
         }
     }
 }
