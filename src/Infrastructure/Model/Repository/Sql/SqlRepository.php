@@ -26,6 +26,7 @@ use NilPortugues\Foundation\Domain\Model\Repository\Filter as DomainFilter;
 use NilPortugues\Foundation\Domain\Model\Repository\Page as ResultPage;
 use PDO;
 use PDOException;
+use RuntimeException;
 
 class SqlRepository implements ReadRepository, WriteRepository, PageRepository
 {
@@ -45,6 +46,18 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     {
         $this->connection = DriverManager::getConnection(['pdo' => $pdo]);
         $this->mapping = $mapping;
+    }
+
+    /**
+     * Returns whether an entity with the given id exists.
+     *
+     * @param $id
+     *
+     * @return bool
+     */
+    public function exists(Identity $id)
+    {
+        return !empty($this->find($id));
     }
 
     /**
@@ -108,42 +121,6 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     }
 
     /**
-     * Returns whether an entity with the given id exists.
-     *
-     * @param $id
-     *
-     * @return bool
-     */
-    public function exists(Identity $id)
-    {
-        return !empty($this->find($id));
-    }
-
-    /**
-     * Returns the total amount of elements in the repository given the restrictions provided by the Filter object.
-     *
-     * @param Filter|null $filter
-     *
-     * @return int
-     */
-    public function count(Filter $filter = null)
-    {
-        $query = $this->queryBuilder();
-
-        $query
-            ->select(['COUNT('.$this->mapping->identity().') AS total'])
-            ->from($this->mapping->name())
-            ->execute()
-            ->fetch(PDO::FETCH_ASSOC);
-
-        if ($filter) {
-            SqlFilter::filter($query, $filter, $this->mapping);
-        }
-
-        return (int) $query->execute()->fetch(PDO::FETCH_ASSOC)['total'];
-    }
-
-    /**
      * Adds a new entity to the storage.
      *
      * @param Identity $value
@@ -159,6 +136,85 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         }
 
         return $this->selectOneQuery($value->id());
+    }
+
+    /**
+     * @param Identity $value
+     *
+     * @throws PDOException
+     */
+    protected function updateQuery(Identity $value)
+    {
+        $query = $this->queryBuilder();
+
+        $this->populateQuery($query, $value, false);
+
+        $affectedRows = $query
+            ->update($this->mapping->name())
+            ->where($query->expr()->eq($this->mapping->identity(), ':id'))
+            ->setParameter(':id', $value->id())
+            ->execute();
+
+        if (0 === $affectedRows) {
+            throw new PDOException(
+                sprintf(
+                    'Could not update %s where %s = %s',
+                    $this->mapping->name(),
+                    $this->mapping->identity(),
+                    $value->id()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param QueryBuilder $query
+     * @param Identity     $value
+     * @param bool         $isInsert
+     */
+    protected function populateQuery(QueryBuilder $query, Identity $value, $isInsert)
+    {
+        $mappings = $this->mappingWithoutIdentityColumn();
+
+        $object = $this->mapping->toArray($value);
+        $setOperation = ($isInsert) ? 'setValue' : 'set';
+
+        foreach ($mappings as $objectProperty => $sqlColumn) {
+            $this->mappingGuard($sqlColumn, $object, $value);
+            $placeholder = ':'.$sqlColumn;
+            $query->$setOperation($sqlColumn, $placeholder);
+            $query->setParameter($placeholder, $object[$sqlColumn]);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function mappingWithoutIdentityColumn()
+    {
+        $mappings = $this->mapping->map();
+
+        if (false !== ($pos = array_search($this->mapping->identity(), $mappings, true))) {
+            unset($mappings[$pos]);
+        }
+
+        return $mappings;
+    }
+
+    /**
+     * @param string   $sqlColumn
+     * @param array    $object
+     * @param Identity $value
+     *
+     * @throws RuntimeException
+     */
+    protected function mappingGuard($sqlColumn, array $object, Identity $value)
+    {
+        if (false === array_key_exists($sqlColumn, $object)) {
+            throw new RuntimeException(
+                sprintf('Column %s not mapped for class %s.', $sqlColumn, get_class($value))
+            );
+        }
     }
 
     /**
@@ -206,7 +262,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
         $mapping = array_flip($this->mapping->map());
 
         if (empty($mapping[$this->mapping->identity()])) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf(
                     'Could not find primary key %s for %s',
                     $this->mapping->identity(),
@@ -236,63 +292,6 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
             ->where($selectQuery->expr()->in($this->mapping->identity(), $ids))
             ->execute()
             ->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * @param Identity $value
-     *
-     * @throws PDOException
-     */
-    protected function updateQuery(Identity $value)
-    {
-        $query = $this->queryBuilder();
-
-        $this->populateQuery($query, $value, false);
-
-        $affectedRows = $query
-            ->update($this->mapping->name())
-            ->where($query->expr()->eq($this->mapping->identity(), ':id'))
-            ->setParameter(':id', $value->id())
-            ->execute();
-
-        if (0 === $affectedRows) {
-            throw new PDOException(
-                sprintf(
-                    'Could not update %s where %s = %s',
-                    $this->mapping->name(),
-                    $this->mapping->identity(),
-                    $value->id()
-                )
-            );
-        }
-    }
-
-    /**
-     * @param QueryBuilder $query
-     * @param Identity     $value
-     * @param bool         $isInsert
-     */
-    protected function populateQuery(QueryBuilder $query, Identity $value, $isInsert)
-    {
-        $mappings = $this->mapping->map();
-        if (false !== ($pos = array_search($this->mapping->identity(), $mappings, true))) {
-            unset($mappings[$pos]);
-        }
-
-        $object = $this->mapping->toArray($value);
-        $setOperation = ($isInsert) ? 'setValue' : 'set';
-
-        foreach ($mappings as $objectProperty => $sqlColumn) {
-            if (false === array_key_exists($sqlColumn, $object)) {
-                throw new \RuntimeException(
-                    sprintf('Column %s not mapped for class %s.', $sqlColumn, get_class($value))
-                );
-            }
-
-            $placeholder = ':'.$sqlColumn;
-            $query->$setOperation($sqlColumn, $placeholder);
-            $query->setParameter($placeholder, $object[$sqlColumn]);
-        }
     }
 
     /**
@@ -421,6 +420,30 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
             1,
             1
         );
+    }
+
+    /**
+     * Returns the total amount of elements in the repository given the restrictions provided by the Filter object.
+     *
+     * @param Filter|null $filter
+     *
+     * @return int
+     */
+    public function count(Filter $filter = null)
+    {
+        $query = $this->queryBuilder();
+
+        $query
+            ->select(['COUNT('.$this->mapping->identity().') AS total'])
+            ->from($this->mapping->name())
+            ->execute()
+            ->fetch(PDO::FETCH_ASSOC);
+
+        if ($filter) {
+            SqlFilter::filter($query, $filter, $this->mapping);
+        }
+
+        return (int) $query->execute()->fetch(PDO::FETCH_ASSOC)['total'];
     }
 
     /**
