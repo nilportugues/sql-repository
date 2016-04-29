@@ -11,12 +11,12 @@
 namespace NilPortugues\Example\Repository;
 
 use DateTime;
-use NilPortugues\Foundation\Infrastructure\Model\Repository\Sql\SqlMapping;
+use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Mapping;
 
 /**
  * Class UserMapping.
  */
-class UserMapping extends SqlMapping
+class UserMapping implements Mapping
 {
     /**
      * Name of the identity field in storage.

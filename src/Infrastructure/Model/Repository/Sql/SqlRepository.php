@@ -14,6 +14,7 @@ use Doctrine\DBAL\DriverManager;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Fields;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Filter;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
+use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Mapping;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Page;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Pageable;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\PageRepository;
@@ -33,7 +34,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     /** @var SqlReadRepository */
     protected $readRepository;
 
-    /** @var SqlMapping */
+    /** @var Mapping */
     protected $mapping;
 
     /** @var \Doctrine\DBAL\Connection */
@@ -42,10 +43,10 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     /**
      * SqlRepository constructor.
      *
-     * @param PDO        $pdo
-     * @param SqlMapping $mapping
+     * @param PDO     $pdo
+     * @param Mapping $mapping
      */
-    public function __construct(PDO $pdo, SqlMapping $mapping)
+    public function __construct(PDO $pdo, Mapping $mapping)
     {
         $this->connection = DriverManager::getConnection(['pdo' => $pdo]);
         $this->mapping = $mapping;

@@ -5,6 +5,7 @@ namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 use Doctrine\DBAL\Connection;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Fields;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Filter;
+use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Mapping;
 use PDO;
 
 abstract class BaseSqlRepository
@@ -12,16 +13,16 @@ abstract class BaseSqlRepository
     /** @var \Doctrine\DBAL\Connection */
     protected $connection;
 
-    /** @var SqlMapping */
+    /** @var Mapping */
     protected $mapping;
 
     /**
      * SqlPageRepository constructor.
      *
      * @param Connection $connection
-     * @param SqlMapping $mapping
+     * @param Mapping    $mapping
      */
-    protected function __construct(Connection $connection, SqlMapping $mapping)
+    protected function __construct(Connection $connection, Mapping $mapping)
     {
         $this->connection = $connection;
         $this->mapping = $mapping;
@@ -29,11 +30,11 @@ abstract class BaseSqlRepository
 
     /**
      * @param Connection $connection
-     * @param SqlMapping $mapping
+     * @param Mapping    $mapping
      *
      * @return static
      */
-    public static function create(Connection $connection, SqlMapping $mapping)
+    public static function create(Connection $connection, Mapping $mapping)
     {
         return new static($connection, $mapping);
     }

@@ -13,6 +13,7 @@ namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 use Doctrine\DBAL\Query\QueryBuilder;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\BaseFilter;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Filter as FilterInterface;
+use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Mapping;
 
 /**
  * Class SqlFilter.
@@ -26,11 +27,11 @@ class SqlFilter
     /**
      * @param QueryBuilder    $query
      * @param FilterInterface $filter
-     * @param SqlMapping      $mapping
+     * @param Mapping         $mapping
      *
      * @return QueryBuilder
      */
-    public static function filter(QueryBuilder $query, FilterInterface $filter, SqlMapping $mapping)
+    public static function filter(QueryBuilder $query, FilterInterface $filter, Mapping $mapping)
     {
         $placeholders = [];
         $columns = $mapping->map();

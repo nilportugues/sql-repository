@@ -11,6 +11,7 @@
 namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Mapping;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Order;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Sort as SortInterface;
 
@@ -22,9 +23,9 @@ class SqlSorter
     /**
      * @param QueryBuilder  $queryBuilder
      * @param SortInterface $sort
-     * @param SqlMapping    $mapping
+     * @param Mapping       $mapping
      */
-    public static function sort(QueryBuilder $queryBuilder, SortInterface $sort, SqlMapping $mapping)
+    public static function sort(QueryBuilder $queryBuilder, SortInterface $sort, Mapping $mapping)
     {
         $columns = $mapping->map();
 

@@ -3,9 +3,9 @@
 namespace NilPortugues\Tests\Foundation;
 
 use DateTime;
-use NilPortugues\Foundation\Infrastructure\Model\Repository\Sql\SqlMapping;
+use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Mapping;
 
-class SqliteCustomerMapping extends SqlMapping
+class SqliteCustomerMapping implements Mapping
 {
     /**
      * Name of the identity field in storage.
