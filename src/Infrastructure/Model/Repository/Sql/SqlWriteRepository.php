@@ -80,7 +80,10 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
      */
     protected function populateQuery(QueryBuilder $query, Identity $value, $isInsert)
     {
-        $mappings = $this->mappingWithoutIdentityColumn();
+        $mappings = $this->mapping->map();
+        if (!$isInsert) {
+            $mappings = $this->mappingWithoutIdentityColumn();
+        }
 
         $object = $this->mapping->toArray($value);
         $setOperation = ($isInsert) ? 'setValue' : 'set';
