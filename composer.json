@@ -14,7 +14,7 @@
   "prefer-stable": true,
   "minimum-stability": "dev",
   "require": {
-    "nilportugues/repository": "dev-master",
+    "nilportugues/repository": "2.3.*",
     "nilportugues/assert": "^1.0",
     "nilportugues/serializer": "1.1.*",
     "doctrine/dbal" : "2.5.*"
