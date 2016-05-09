@@ -104,7 +104,7 @@ class SqlRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $this->repository->addAll([$client1, $client2, $client3, $client4]);
 
-        $distinctFields = new Fields(['name', 'date', 'totalOrders', 'totalEarnings']);
+        $distinctFields = new Fields(['name', 'date.date', 'totalOrders', 'totalEarnings']);
         $pageable = new Pageable(1, 10, new Sort(['name'], new Order('DESC')), null, null, $distinctFields);
 
         $result = $this->repository->findAll($pageable);
@@ -138,7 +138,7 @@ class SqlRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $this->repository->addAll([$client1, $client2, $client3, $client4]);
 
-        $distinctFields = new Fields(['name', 'date', 'totalOrders', 'totalEarnings']);
+        $distinctFields = new Fields(['name', 'date.date', 'totalOrders', 'totalEarnings']);
         $filter = new Filter();
 
         $results = $this->repository->findByDistinct(
@@ -215,7 +215,7 @@ class SqlRepositoryTest extends \PHPUnit_Framework_TestCase
         $filter
             ->must()
             ->notIncludeGroup(
-                'date',
+                'date.date',
                 ['2010-12-01', '2010-12-10', '2013-02-22']
             );
 
@@ -341,7 +341,7 @@ class SqlRepositoryTest extends \PHPUnit_Framework_TestCase
     public function testFindByMustIncludeGroup()
     {
         $filter = new Filter();
-        $filter->must()->includeGroup('date', ['2010-12-01', '2010-12-10', '2013-02-22']);
+        $filter->must()->includeGroup('date.date', ['2010-12-01', '2010-12-10', '2013-02-22']);
         $results = $this->repository->findBy($filter);
         $this->assertEquals(3, count($results));
     }
@@ -478,7 +478,7 @@ class SqlRepositoryTest extends \PHPUnit_Framework_TestCase
     public function testFindByMustNotIncludeGroup()
     {
         $filter = new Filter();
-        $filter->mustNot()->includeGroup('date', ['2010-12-01', '2010-12-10', '2013-02-22']);
+        $filter->mustNot()->includeGroup('date.date', ['2010-12-01', '2010-12-10', '2013-02-22']);
 
         $results = $this->repository->findBy($filter);
 
@@ -488,7 +488,7 @@ class SqlRepositoryTest extends \PHPUnit_Framework_TestCase
     public function testFindByMustNotNotIncludeGroup()
     {
         $filter = new Filter();
-        $filter->mustNot()->notIncludeGroup('date',
+        $filter->mustNot()->notIncludeGroup('date.date',
             ['2010-12-01', '2010-12-10', '2013-02-22']);
 
         $results = $this->repository->findBy($filter);
@@ -629,7 +629,7 @@ class SqlRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         $filter = new Filter();
         $filter->must()->contain('name', 'Hideo Kojima');
-        $filter->should()->includeGroup('date', ['2010-12-01', '2010-12-10', '2013-02-22']);
+        $filter->should()->includeGroup('date.date', ['2010-12-01', '2010-12-10', '2013-02-22']);
 
         $results = $this->repository->findBy($filter);
 
@@ -640,7 +640,7 @@ class SqlRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         $filter = new Filter();
         $filter->must()->contain('name', 'Hideo Kojima');
-        $filter->should()->notIncludeGroup('date',
+        $filter->should()->notIncludeGroup('date.date',
             ['2010-12-01', '2010-12-10', '2013-02-22']);
 
         $results = $this->repository->findBy($filter);

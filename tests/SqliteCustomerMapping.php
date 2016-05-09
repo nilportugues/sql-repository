@@ -39,7 +39,7 @@ class SqliteCustomerMapping implements Mapping
             'name' => 'customer_name',
             'totalOrders' => 'total_orders',
             'totalEarnings' => 'total_earnings',
-            'date' => 'created_at',
+            'date.date' => 'created_at',
         ];
     }
 
@@ -78,12 +78,6 @@ class SqliteCustomerMapping implements Mapping
      */
     public function toArray($object)
     {
-        return [
-            'customer_id' => $object->id(),
-            'customer_name' => $object->name(),
-            'total_orders' => $object->totalOrders(),
-            'total_earnings' => $object->totalEarnings(),
-            'created_at' => $object->date()->getTimestamp(),
-        ];
+        return [];
     }
 }

@@ -2,10 +2,12 @@
 
 namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use NilPortugues\Assert\Assert;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Filter;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
+use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Mapping;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\WriteRepository;
 use NilPortugues\Foundation\Domain\Model\Repository\Filter as DomainFilter;
 use PDO;
@@ -14,6 +16,21 @@ use RuntimeException;
 
 class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
 {
+    /** @var \NilPortugues\Serializer\Serializer */
+    protected $serializer;
+
+    /**
+     * SqlWriteRepository constructor.
+     *
+     * @param Connection $connection
+     * @param Mapping    $mapping
+     */
+    public function __construct(Connection $connection, Mapping $mapping)
+    {
+        $this->serializer = ObjectFlattener::instance();
+        parent::__construct($connection, $mapping);
+    }
+
     /**
      * Returns whether an entity with the given id exists.
      *
@@ -85,15 +102,25 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
             $mappings = $this->mappingWithoutIdentityColumn();
         }
 
-        $object = $this->mapping->toArray($value);
+        $object = $this->flattenObject($value);
         $setOperation = ($isInsert) ? 'setValue' : 'set';
 
         foreach ($mappings as $objectProperty => $sqlColumn) {
-            $this->mappingGuard($sqlColumn, $object, $value);
+            $this->mappingGuard($objectProperty, $object, $value);
             $placeholder = ':'.$sqlColumn;
             $query->$setOperation($sqlColumn, $placeholder);
-            $query->setParameter($placeholder, $object[$sqlColumn]);
+            $query->setParameter($placeholder, $object[$objectProperty]);
         }
+    }
+
+    /**
+     * @param $value
+     *
+     * @return array
+     */
+    protected function flattenObject($value)
+    {
+        return $this->serializer->serialize($value);
     }
 
     /**
