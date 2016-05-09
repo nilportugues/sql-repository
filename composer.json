@@ -11,8 +11,10 @@
       "email": "contact@nilportugues.com"
     }
   ],
+  "prefer-stable": true,
+  "minimum-stability": "dev",
   "require": {
-    "nilportugues/repository": "^2.3",
+    "nilportugues/repository": "dev-master",
     "nilportugues/assert": "^1.0",
     "nilportugues/serializer": "1.1.*",
     "doctrine/dbal" : "2.5.*"

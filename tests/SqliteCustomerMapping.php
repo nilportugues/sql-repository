@@ -64,9 +64,17 @@ class SqliteCustomerMapping implements Mapping
     }
 
     /**
-     * @param Customer $object
+     * The automatic generated strategy used will be the data-store's if set to true.
      *
-     * @return array
+     * @return bool
+     */
+    public function autoGenerateId()
+    {
+        return false;
+    }
+
+    /**
+     * @deprecated
      */
     public function toArray($object)
     {
