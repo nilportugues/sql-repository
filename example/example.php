@@ -31,11 +31,11 @@ print_r($repository->find($userId));
 echo PHP_EOL;
 
 $filter = new Filter();
-$filter->must()->beGreaterThanOrEqual('registeredOn', '2016-01-01 00:00:00');
-$filter->must()->beLessThan('registeredOn', '2016-02-01 00:00:00');
+$filter->must()->beGreaterThanOrEqual('registeredOn.date', '2016-01-01 00:00:00');
+$filter->must()->beLessThan('registeredOn.date', '2016-02-01 00:00:00');
 
 $sort = new Sort();
-$sort->setOrderFor('registeredOn', new Order('ASC'));
+$sort->setOrderFor('registeredOn.date', new Order('ASC'));
 
 print_r($repository->findBy($filter, $sort));
 echo PHP_EOL;

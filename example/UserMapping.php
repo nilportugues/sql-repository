@@ -50,7 +50,7 @@ class UserMapping implements Mapping
             'username' => 'username',
             'alias' => 'public_username',
             'email' => 'email',
-            'registeredOn' => 'created_at',
+            'registeredOn.date' => 'created_at',
         ];
     }
 
@@ -90,4 +90,15 @@ class UserMapping implements Mapping
             new DateTime($data['created_at'])
         );
     }
+
+    /**
+     * The automatic generated strategy used will be the data-store's if set to true.
+     *
+     * @return bool
+     */
+    public function autoGenerateId()
+    {
+        return true;
+    }
+
 }
