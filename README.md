@@ -5,3 +5,16 @@
 
 
 SQL Repository using *[nilportugues/repository](https://github.com/nilportugues/php-repository)* as foundation. Uses [Doctrine DBAL](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/query-builder.html) to write the underlying SQL.
+
+## Features
+
+- Repository pattern right from the start.
+- Mapping written in PHP. No complicated XML or YML files. 
+- Search the repository using PHP objects and your mapped object structure.
+- Supports custom Data Types (a.k.a Value Objects). 
+- Hydrating objects is optional.
+- Multiple SQL drivers available using Doctrine's DBAL.
+- Multiple alternative implementations: InMemory, MongoDB, Flat File...
+
+
+
