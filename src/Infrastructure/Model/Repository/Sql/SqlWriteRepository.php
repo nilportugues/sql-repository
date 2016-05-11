@@ -98,7 +98,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
     protected function populateQuery(QueryBuilder $query, Identity $value, $isInsert)
     {
         $mappings = $this->mapping->map();
-        if (false === $this->mapping->autoGenerateId()) {
+        if ($this->mapping->autoGenerateId() && $isInsert) {
             $mappings = $this->mappingWithoutIdentityColumn();
         }
 
@@ -179,15 +179,25 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
         $ids = $this->fetchIds($values);
         $alreadyExistingRows = $this->fetchExistingRows($ids);
 
+        $updates = [];
+        $inserts = [];
+
+
         /** @var Identity $value */
         foreach ($values as $value) {
-            foreach ($alreadyExistingRows as $row) {
-                if ($value->id() == $row[$this->mapping->identity()]) {
-                    $this->updateQuery($value);
-                    continue;
-                }
-                $this->insertQuery($value);
+            if (false !== array_key_exists($value->id(), $alreadyExistingRows)) {
+                $updates[] = $value;
+            } else {
+                $inserts[] = $value;
             }
+        }
+        
+        foreach ($updates as $update) {
+            $this->updateQuery($update);
+        }
+
+        foreach ($inserts as $insert) {
+            $this->insertQuery($insert);
         }
 
         $mapping = array_flip($this->mapping->map());
@@ -208,12 +218,21 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
     {
         $selectQuery = $this->queryBuilder();
 
-        return (array) $selectQuery
+        $results = (array) $selectQuery
             ->select([$this->mapping->identity()])
             ->from($this->mapping->name())
             ->where($selectQuery->expr()->in($this->mapping->identity(), $ids))
             ->execute()
             ->fetchAll(PDO::FETCH_ASSOC);
+
+        $ids = [];
+
+        foreach($results as $row) {
+            $id = array_pop($row);
+            $ids[$id] = $id;
+        }
+
+        return $ids;
     }
 
     /**
