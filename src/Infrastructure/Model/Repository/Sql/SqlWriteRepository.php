@@ -155,7 +155,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
 
     /**
      * @param Identity $value
-     */a
+     */
     protected function insertQuery(Identity $value)
     {
         $query = $this->queryBuilder();
