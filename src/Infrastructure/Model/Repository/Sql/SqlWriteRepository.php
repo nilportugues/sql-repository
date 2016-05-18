@@ -155,7 +155,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
 
     /**
      * @param Identity $value
-     */
+     */a
     protected function insertQuery(Identity $value)
     {
         $query = $this->queryBuilder();
@@ -185,7 +185,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
 
         /** @var Identity $value */
         foreach ($values as $value) {
-            if (false !== array_key_exists($value->id(), $alreadyExistingRows)) {
+            if (false !== array_key_exists((string) $value->id(), $alreadyExistingRows)) {
                 $updates[] = $value;
             } else {
                 $inserts[] = $value;
