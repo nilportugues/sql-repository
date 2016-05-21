@@ -18,7 +18,7 @@ trait SqlRepositoryHydrator
     {
         $result = parent::find($id, $fields);
 
-        return ($result) ? $this->mapping->fromArray($result) : [];
+        return $this->mapping->fromArray($result);
     }
 
     /**
@@ -28,7 +28,7 @@ trait SqlRepositoryHydrator
     {
         $results = parent::findBy($filter, $sort, $fields);
 
-        return ($results) ? $this->hydrateArray($results) : [];
+        return $this->hydrateArray($results);
     }
 
     /**
@@ -51,7 +51,7 @@ trait SqlRepositoryHydrator
         $page = parent::findAll($pageable);
 
         return new Page(
-            ($page->content()) ? $this->hydrateArray($page->content()) : [],
+            $this->hydrateArray($page->content()),
             $page->totalElements(),
             $page->pageNumber(),
             $page->totalPages(),
@@ -68,6 +68,6 @@ trait SqlRepositoryHydrator
     {
         $results = parent::findByDistinct($distinctFields, $filter, $sort);
 
-        return ($results) ? $this->hydrateArray($results) : [];
+        return $this->hydrateArray($results);
     }
 }
