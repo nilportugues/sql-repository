@@ -48,7 +48,7 @@ class SqlPageRepository extends BaseSqlRepository implements PageRepository
                 )->fetchAll(PDO::FETCH_ASSOC),
                 $total,
                 $pageable->pageNumber(),
-                ceil($total / $pageable->pageSize())
+                ceil($total / ($pageable->pageSize()>0) ? $pageable->pageSize() : 1)
             );
         }
 
