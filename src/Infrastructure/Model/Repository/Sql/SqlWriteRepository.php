@@ -10,6 +10,7 @@ use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Mapping;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\WriteRepository;
 use NilPortugues\Foundation\Domain\Model\Repository\Filter as DomainFilter;
+use NilPortugues\Foundation\Infrastructure\ObjectFlattener;
 use PDO;
 use PDOException;
 use RuntimeException;
