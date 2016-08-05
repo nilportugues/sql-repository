@@ -171,15 +171,6 @@ class SqlFilter
                         }
                         self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
                         break;
-                    case BaseFilter::STARTS_WITH:
-                    case BaseFilter::ENDS_WITH:
-                        $op = (!$isNot) ? 'LIKE' : 'NOT LIKE';
-                        $newValue = $value.'%';
-                        if ($filterName === BaseFilter::ENDS_WITH) {
-                            $newValue = '%'.$value;
-                        }
-                        self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $newValue);
-                        break;
                     case BaseFilter::EQUALS:
                     case BaseFilter::NOT_EQUAL:
                         $op = (!$isNot) ? 'eq' : 'neq';
@@ -187,6 +178,30 @@ class SqlFilter
                             $op = (!$isNot) ? 'neq' : 'eq';
                         }
                         self::query($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $value);
+                        break;
+
+                    case BaseFilter::EMPTY_FILTER:
+                        $op = (!$isNot) ? 'eq' : 'neq';
+                        self::query($placeholders, $query, $operator, $nextPlaceholder, $key, $op, '');
+                        break;
+
+                    case BaseFilter::NOT_EMPTY:
+                        $op = (!$isNot) ? 'neq' : 'eq';
+                        self::query($placeholders, $query, $operator, $nextPlaceholder, $key, $op, '');
+                        break;
+
+                    case BaseFilter::ENDS_WITH:
+                    case BaseFilter::NOT_ENDS:
+                        $op = (!$isNot) ? 'LIKE' : 'NOT LIKE';
+                        $newValue = '%'.$value;
+                        self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $newValue);
+                        break;
+
+                    case BaseFilter::STARTS_WITH:
+                    case BaseFilter::NOT_STARTS:
+                        $op = (!$isNot) ? 'LIKE' : 'NOT LIKE';
+                        $newValue = $value.'%';
+                        self::likeQuery($placeholders, $query, $operator, $nextPlaceholder, $key, $op, $newValue);
                         break;
                 }
             }

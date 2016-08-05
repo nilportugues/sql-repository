@@ -346,6 +346,29 @@ class SqlRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3, count($results));
     }
 
+    public function testFindByWithMustBeEmpty()
+    {
+        $filter = new Filter();
+        $filter->must()->empty('totalOrders');
+
+        $fields = new Fields(['name']);
+        $results = $this->repository->findBy($filter, null, $fields);
+
+        $this->assertEquals(0, count($results));
+    }
+
+    public function testFindByWithMustBeNotEmpty()
+    {
+        $filter = new Filter();
+        $filter->must()->notEmpty('totalOrders');
+
+        $fields = new Fields(['name']);
+
+        $results = $this->repository->findBy($filter, null, $fields);
+
+        $this->assertEquals(4, count($results));
+    }
+
     //--------------------------------------------------------------------------------
     // MUST NOT FILTER TESTS
     //--------------------------------------------------------------------------------
@@ -513,6 +536,28 @@ class SqlRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3, count($results));
     }
 
+    public function testFindByWithMustNotBeEmpty()
+    {
+        $filter = new Filter();
+        $filter->mustNot()->empty('totalOrders');
+
+        $fields = new Fields(['name']);
+        $results = $this->repository->findBy($filter, null, $fields);
+
+        $this->assertEquals(4, count($results));
+    }
+
+    public function testFindByWithMustNotBeNotEmpty()
+    {
+        $filter = new Filter();
+        $filter->mustNot()->notEmpty('totalOrders');
+
+        $fields = new Fields(['name']);
+
+        $results = $this->repository->findBy($filter, null, $fields);
+
+        $this->assertEquals(0, count($results));
+    }
     //--------------------------------------------------------------------------------
     // SHOULD FILTER TESTS
     //--------------------------------------------------------------------------------
