@@ -17,7 +17,7 @@ class SqlPageRepository extends BaseSqlRepository implements PageRepository
      *
      * @return Page
      */
-    public function findAll(Pageable $pageable = null)
+    public function findAll(Pageable $pageable = null) : Page
     {
         $query = $this->queryBuilder();
 

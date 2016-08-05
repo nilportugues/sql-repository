@@ -35,7 +35,7 @@ class SqlReadRepository extends BaseSqlRepository implements ReadRepository
      *
      * @return array
      */
-    public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null)
+    public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null) : array
     {
         $query = $this->queryBuilder();
 
@@ -63,7 +63,7 @@ class SqlReadRepository extends BaseSqlRepository implements ReadRepository
      *
      * @return array
      */
-    public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null)
+    public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null) : array
     {
         $query = $this->queryBuilder();
 
@@ -85,11 +85,11 @@ class SqlReadRepository extends BaseSqlRepository implements ReadRepository
     /**
      * Returns whether an entity with the given id exists.
      *
-     * @param $id
+     * @param Identity $id
      *
      * @return bool
      */
-    public function exists(Identity $id)
+    public function exists(Identity $id) : bool
     {
         return $this->exists($id);
     }

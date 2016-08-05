@@ -63,7 +63,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      *
      * @return bool
      */
-    public function exists(Identity $id)
+    public function exists(Identity $id): bool
     {
         return !empty($this->find($id));
     }
@@ -114,7 +114,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      *
      * @return array
      */
-    public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null)
+    public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null): array
     {
         return $this->readRepository->findBy($filter, $sort, $fields);
     }
@@ -134,8 +134,6 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      * If $filter is null, all the repository data will be deleted.
      *
      * @param Filter $filter
-     *
-     * @return bool
      */
     public function removeAll(Filter $filter = null)
     {
@@ -149,7 +147,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      *
      * @return Page
      */
-    public function findAll(Pageable $pageable = null)
+    public function findAll(Pageable $pageable = null) : Page
     {
         return $this->pageRepository->findAll($pageable);
     }
@@ -161,7 +159,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      *
      * @return int
      */
-    public function count(Filter $filter = null)
+    public function count(Filter $filter = null) : int
     {
         return $this->readRepository->count($filter);
     }
@@ -175,7 +173,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      *
      * @return array
      */
-    public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null)
+    public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null): array
     {
         return $this->readRepository->findByDistinct($distinctFields, $filter, $sort);
     }

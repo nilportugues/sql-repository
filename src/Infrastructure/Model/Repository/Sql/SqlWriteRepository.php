@@ -38,7 +38,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
      *
      * @return bool
      */
-    public function exists(Identity $id)
+    public function exists(Identity $id): bool
     {
         return !empty($this->selectOneQuery($id));
     }
@@ -118,7 +118,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
      *
      * @return array
      */
-    protected function flattenObject($value)
+    protected function flattenObject($value) : array
     {
         return $this->serializer->serialize($value);
     }
@@ -126,7 +126,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
     /**
      * @return array
      */
-    protected function mappingWithoutIdentityColumn()
+    protected function mappingWithoutIdentityColumn() : array
     {
         $mappings = $this->mapping->map();
 
@@ -214,7 +214,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
      *
      * @return array
      */
-    protected function fetchExistingRows(array $ids)
+    protected function fetchExistingRows(array $ids) : array
     {
         $selectQuery = $this->queryBuilder();
 
@@ -240,7 +240,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
      *
      * @return array
      */
-    protected function findByHelper(Filter $filter = null)
+    protected function findByHelper(Filter $filter = null) : array
     {
         $query = $this->queryBuilder();
         $query->select(['*'])->from($this->mapping->name());
@@ -273,8 +273,6 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
      * If $filter is null, all the repository data will be deleted.
      *
      * @param Filter $filter
-     *
-     * @return bool
      */
     public function removeAll(Filter $filter = null)
     {
@@ -315,7 +313,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
      *
      * @return array
      */
-    protected function fetchIds(array $values)
+    protected function fetchIds(array $values) : array
     {
         $ids = [];
 

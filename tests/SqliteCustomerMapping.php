@@ -12,7 +12,7 @@ class SqliteCustomerMapping implements Mapping
      *
      * @return string
      */
-    public function identity()
+    public function identity() : string
     {
         return 'customer_id';
     }
@@ -22,7 +22,7 @@ class SqliteCustomerMapping implements Mapping
      *
      * @return string
      */
-    public function name()
+    public function name() : string
     {
         return 'customers';
     }
@@ -32,7 +32,7 @@ class SqliteCustomerMapping implements Mapping
      *
      * @return array
      */
-    public function map()
+    public function map() : array
     {
         return [
             'id' => 'customer_id',
@@ -68,16 +68,8 @@ class SqliteCustomerMapping implements Mapping
      *
      * @return bool
      */
-    public function autoGenerateId()
+    public function autoGenerateId() : bool
     {
         return false;
-    }
-
-    /**
-     * @deprecated
-     */
-    public function toArray($object)
-    {
-        return [];
     }
 }

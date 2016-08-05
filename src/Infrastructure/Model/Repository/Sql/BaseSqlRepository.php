@@ -46,7 +46,7 @@ abstract class BaseSqlRepository
      *
      * @return int
      */
-    public function count(Filter $filter = null)
+    public function count(Filter $filter = null): int
     {
         $query = $this->queryBuilder();
 

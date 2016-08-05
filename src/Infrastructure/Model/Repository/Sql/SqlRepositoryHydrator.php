@@ -24,7 +24,7 @@ trait SqlRepositoryHydrator
     /**
      * {@inheritdoc}
      */
-    public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null)
+    public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null) : array
     {
         $results = parent::findBy($filter, $sort, $fields);
 
@@ -46,7 +46,7 @@ trait SqlRepositoryHydrator
     /**
      * {@inheritdoc}
      */
-    public function findAll(Pageable $pageable = null)
+    public function findAll(Pageable $pageable = null) : \NilPortugues\Foundation\Domain\Model\Repository\Contracts\Page
     {
         $page = parent::findAll($pageable);
 
@@ -64,7 +64,7 @@ trait SqlRepositoryHydrator
     /**
      * {@inheritdoc}
      */
-    public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null)
+    public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null) : array
     {
         $results = parent::findByDistinct($distinctFields, $filter, $sort);
 
