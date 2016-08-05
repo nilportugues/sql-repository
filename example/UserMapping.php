@@ -13,9 +13,6 @@ namespace NilPortugues\Example\Repository;
 use DateTime;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Mapping;
 
-/**
- * Class UserMapping.
- */
 class UserMapping implements Mapping
 {
     /**
@@ -23,7 +20,8 @@ class UserMapping implements Mapping
      *
      * @return string
      */
-    public function identity()
+    public function identity() : string
+
     {
         return 'user_id';
     }
@@ -33,7 +31,7 @@ class UserMapping implements Mapping
      *
      * @return string
      */
-    public function name()
+    public function name() : string
     {
         return 'users';
     }
@@ -43,7 +41,7 @@ class UserMapping implements Mapping
      *
      * @return array
      */
-    public function map()
+    public function map() : array
     {
         return [
             'userId' => 'user_id',
@@ -54,21 +52,6 @@ class UserMapping implements Mapping
         ];
     }
 
-    /**
-     * @param User $object
-     *
-     * @return array
-     */
-    public function toArray($object)
-    {
-        return [
-            'user_id' => $object->id(),
-            'username' => $object->username(),
-            'public_username' => $object->alias(),
-            'email' => $object->email(),
-            'created_at' => $object->registeredOn()->format('Y-m-d H:i:s'),
-        ];
-    }
 
     /**
      * @param array $data
@@ -96,7 +79,7 @@ class UserMapping implements Mapping
      *
      * @return bool
      */
-    public function autoGenerateId()
+    public function autoGenerateId() : bool
     {
         return true;
     }
