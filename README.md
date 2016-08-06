@@ -11,7 +11,7 @@ It allows you to fetch, paginate and operate with data easily without adding ove
 
 - **Repository pattern right from the start.**
 - **Multiple SQL drivers available using Doctrine's DBAL.**
-- **All operations available from the begining:**
+- **All operations available from the beginning:**
   - Search the repository using PHP objects
   - No need to write SQL for basic operations.
   - Filtering is available using the Filter object.
