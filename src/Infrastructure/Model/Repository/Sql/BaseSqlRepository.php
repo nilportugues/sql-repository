@@ -5,6 +5,7 @@ namespace NilPortugues\Foundation\Infrastructure\Model\Repository\Sql;
 use Doctrine\DBAL\Connection;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Fields;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Filter;
+use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Mapping;
 use PDO;
 
@@ -106,5 +107,17 @@ abstract class BaseSqlRepository
             ->setParameter(':id', $id);
 
         return $q->execute()->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Returns whether an entity with the given id exists.
+     *
+     * @param $id
+     *
+     * @return bool
+     */
+    public function exists(Identity $id): bool
+    {
+        return !empty($this->selectOneQuery($id));
     }
 }

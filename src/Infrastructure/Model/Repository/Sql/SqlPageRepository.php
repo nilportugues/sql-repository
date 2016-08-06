@@ -76,10 +76,7 @@ class SqlPageRepository extends BaseSqlRepository implements PageRepository
 
         if (count($pageable->distinctFields()->get()) > 0) {
             $columns = $this->getColumns($pageable->distinctFields());
-            if (empty($columns)) {
-                $columns = ['*'];
-            }
-
+            $columns = (empty($columns)) ? ['*'] : $columns;
             $columns = 'DISTINCT '.implode(', ', $columns);
         }
 

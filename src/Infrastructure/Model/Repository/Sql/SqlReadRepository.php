@@ -81,16 +81,4 @@ class SqlReadRepository extends BaseSqlRepository implements ReadRepository
 
         return $query->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    /**
-     * Returns whether an entity with the given id exists.
-     *
-     * @param Identity $id
-     *
-     * @return bool
-     */
-    public function exists(Identity $id) : bool
-    {
-        return $this->exists($id);
-    }
 }

@@ -5,7 +5,7 @@ namespace NilPortugues\Tests\Foundation;
 use DateTime;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Mapping;
 
-class SqliteCustomerMapping implements Mapping
+class SqliteCustomerMappingWithGeneratedId implements Mapping
 {
     /**
      * Name of the identity field in storage.
@@ -70,6 +70,6 @@ class SqliteCustomerMapping implements Mapping
      */
     public function autoGenerateId() : bool
     {
-        return false;
+        return true;
     }
 }

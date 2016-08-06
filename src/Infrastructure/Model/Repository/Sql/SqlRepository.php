@@ -65,7 +65,7 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
      */
     public function exists(Identity $id): bool
     {
-        return !empty($this->find($id));
+        return $this->readRepository->exists($id);
     }
 
     /**

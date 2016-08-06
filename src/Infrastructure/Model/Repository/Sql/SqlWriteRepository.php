@@ -33,18 +33,6 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
     }
 
     /**
-     * Returns whether an entity with the given id exists.
-     *
-     * @param $id
-     *
-     * @return bool
-     */
-    public function exists(Identity $id): bool
-    {
-        return !empty($this->selectOneQuery($id));
-    }
-
-    /**
      * Adds a new entity to the storage.
      *
      * @param Identity $value
@@ -104,25 +92,26 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
     protected function populateQuery(QueryBuilder $query, Identity $value, $isInsert)
     {
         $mappings = $this->mapping->map();
+        $flattenObject = $this->flattenObject($value);
+
         if ($this->mapping->autoGenerateId() && $isInsert) {
             $mappings = $this->mappingWithoutIdentityColumn();
         }
 
-        $object = $this->flattenObject($value);
         if ($this->mapping->autoGenerateId()) {
             $keys = array_flip($this->mapping->map());
             $primaryKey = $keys[$this->mapping->identity()];
-            unset($object[$primaryKey]);
+            unset($flattenObject[$primaryKey]);
             unset($mappings[$primaryKey]);
         }
 
         $setOperation = ($isInsert) ? 'setValue' : 'set';
 
         foreach ($mappings as $objectProperty => $sqlColumn) {
-            $this->mappingGuard($objectProperty, $object, $value);
+            $this->mappingGuard($objectProperty, $flattenObject, $value);
             $placeholder = ':'.$sqlColumn;
             $query->$setOperation($sqlColumn, $placeholder);
-            $query->setParameter($placeholder, $object[$objectProperty]);
+            $query->setParameter($placeholder, $flattenObject[$objectProperty]);
         }
     }
 
@@ -156,6 +145,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
      * @param Identity $value
      *
      * @throws RuntimeException
+     * @codeCoverageIgnore
      */
     protected function mappingGuard($sqlColumn, array $object, Identity $value)
     {
@@ -172,9 +162,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
     protected function insertQuery(Identity $value)
     {
         $query = $this->queryBuilder();
-
         $this->populateQuery($query, $value, true);
-
         $query->insert($this->mapping->name())->execute();
     }
 
@@ -329,7 +317,9 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
 
         foreach ($values as $value) {
             Assert::isInstanceOf($value, Identity::class);
-            $ids[] = $value->id();
+            if (null !== $value->id()) {
+                $ids[] = $value->id();
+            }
         }
 
         return $ids;
@@ -337,6 +327,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
 
     /**
      * @param $mapping
+     * @codeCoverageIgnore
      */
     protected function guardMappedIdentity(array &$mapping)
     {
