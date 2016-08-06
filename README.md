@@ -27,8 +27,16 @@ It allows you to fetch, paginate and operate with data easily without adding ove
   - Mapping deep data structures made easy using dot-notation.
 - **Hydratation is optional.**
   - Use hydratation when needed. Use `SqlRepositoryHydrator` trait to enable it.
+- **Both custom ids and autoincremental ids are supported**
+  - Want to use UUID or a custom ID strategy? No problem! 
   
+## Usage
 
+See the [/example](https://github.com/PHPRepository/sql-repository/tree/master/example) directory.
+
+Examples for both `Custom ID` and `AutoIncremental ID` are provided.
+  
+## Mapping
 
 
 
