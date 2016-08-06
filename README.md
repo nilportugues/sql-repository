@@ -5,7 +5,9 @@
 
 SQL Repository library aims to reduce the time spent writing repositories. 
 
-It allows you to fetch, paginate and operate with data easily without adding overhead and following good practices.
+Motivation for this library was the boredom of writing SQL or using query builders to do the same thing over and over again in multiple projects.
+
+SQL Repository allows you to fetch, paginate and operate with data easily without adding overhead and following good practices.
 
 ## Features
 
