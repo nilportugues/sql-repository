@@ -58,7 +58,9 @@ You're good to go.
 
 ## Mapping
 
-## Repository methods
+## Repository 
+
+### Methods
 
 ### Filtering methods
 
