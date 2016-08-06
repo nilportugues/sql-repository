@@ -42,9 +42,7 @@ $ composer require nilportugues/sql-repository
 
 **Show me the code**
 
-See the [/example](https://github.com/PHPRepository/sql-repository/tree/master/example) directory.
-
-Examples for both `Custom ID` and `AutoIncremental ID` are provided.
+See the [/example](https://github.com/PHPRepository/sql-repository/tree/master/example) directory. Examples for both `Custom ID` and `AutoIncremental ID` are provided.
 
 **Explanation**
 
