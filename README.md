@@ -48,14 +48,9 @@ Examples for both `Custom ID` and `AutoIncremental ID` are provided.
 
 **Explanation**
 
-- You require a class implementing the `Identity` interface provided. 
-  - Adds 2 methods, `id()` and `__toString`.
-  
 - You require a class implementing the `Mapping` interface provided
-
-- You require a class to extend from `SqlRepository` class provided.
-  - Inject your PDO connection to the `SqlRepository`
-  - Inject the Mapping class to the `SqlRepository`
+- You require a class implementing the `Identity` interface provided. Adds 2 methods, `id()` and `__toString`.
+- You require a class to extend from `SqlRepository` class provided. Inject your PDO connection and the Mapping class to the `SqlRepository`
 
 You're good to go.
   
