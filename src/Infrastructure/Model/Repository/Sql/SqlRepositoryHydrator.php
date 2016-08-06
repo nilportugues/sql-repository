@@ -86,6 +86,6 @@ trait SqlRepositoryHydrator
             return;
         }
 
-        return $this->mapping->fromArray($value);
+        return $this->mapping->fromArray($result);
     }
 }
