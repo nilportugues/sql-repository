@@ -21,7 +21,7 @@ It allows you to fetch, paginate and operate with data easily without adding ove
 - **Want to change persistence layer? Provided repository alternatives are:**
   - *InMemoryRepository*: for testing purposes
   - *MongoDBRepository*: because your schema keeps changing
-  - **FileRepository*: sites without DB access or for testing purposes.
+  - *FileRepository*: sites without DB access or for testing purposes.
 - **Mapping written in PHP.**
   - Supports custom Data Types (a.k.a Value Objects). 
   - Mapping deep data structures made easy using dot-notation.
