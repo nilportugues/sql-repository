@@ -58,10 +58,6 @@ class UserMapping implements Mapping
      */
     public function fromArray(array $data)
     {
-        if (empty($data)) {
-            return;
-        }
-
         return new User(
             $data['user_id'],
             $data['username'],

@@ -18,6 +18,10 @@ trait SqlRepositoryHydrator
     {
         $result = parent::find($id, $fields);
 
+        if (empty($result)) {
+            return;
+        }
+
         return $this->mapping->fromArray($result);
     }
 
@@ -76,7 +80,11 @@ trait SqlRepositoryHydrator
      */
     public function add(Identity $value)
     {
-        $value = parent::add($value);
+        $result = parent::add($value);
+
+        if (empty($result)) {
+            return;
+        }
 
         return $this->mapping->fromArray($value);
     }
