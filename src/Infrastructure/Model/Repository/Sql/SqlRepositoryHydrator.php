@@ -88,4 +88,14 @@ trait SqlRepositoryHydrator
 
         return $this->mapping->fromArray($result);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addAll(array $values)
+    {
+        $results = parent::addAll($values);
+
+        return $this->hydrateArray($results);
+    }
 }

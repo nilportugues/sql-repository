@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace NilPortugues\Example\Repository;
+namespace NilPortugues\Example\CustomId;
 
 use DateTime;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Mapping;
@@ -74,6 +74,6 @@ class UserMapping implements Mapping
      */
     public function autoGenerateId() : bool
     {
-        return true;
+        return false;
     }
 }

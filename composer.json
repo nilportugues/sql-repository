@@ -27,7 +27,7 @@
   "autoload": {
     "psr-4": {
       "NilPortugues\\Foundation\\": "src",
-      "NilPortugues\\Example\\Repository\\": "example/"
+      "NilPortugues\\Example\\": "example/"
     }
   },
   "autoload-dev": {
