@@ -40,11 +40,13 @@ $ composer require nilportugues/sql-repository
 
 ## Usage
 
+**Show me the code**
+
 See the [/example](https://github.com/PHPRepository/sql-repository/tree/master/example) directory.
 
 Examples for both `Custom ID` and `AutoIncremental ID` are provided.
 
-**TL:DR**
+**Explanation**
 
 - You require a class implementing the `Identity` interface provided. 
   - Adds 2 methods, `id()` and `__toString`.
