@@ -31,7 +31,9 @@ SQL Repository allows you to fetch, paginate and operate with data easily withou
   - Use hydratation when needed. Use `SqlRepositoryHydrator` trait to enable it.
 - **Both custom ids and autoincremental ids are supported**
   - Want to use UUID or a custom ID strategy? No problem! 
-  
+- **Caching layer required? Easily to add!**
+  - Require the *CacheRepository* from componer to consistent caching to all operations.
+
 ## Installation
 
 Use [Composer](https://getcomposer.org) to install the package:
