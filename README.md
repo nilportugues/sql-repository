@@ -43,6 +43,19 @@ $ composer require nilportugues/sql-repository
 See the [/example](https://github.com/PHPRepository/sql-repository/tree/master/example) directory.
 
 Examples for both `Custom ID` and `AutoIncremental ID` are provided.
+
+**TL:DR**
+
+- You require a class implementing the `Identity` interface provided. 
+  - Adds 2 methods, `id()` and `__toString`.
+  
+- You require a class implementing the `Mapping` interface provided
+
+- You require a class to extend from `SqlRepository` class provided.
+  - Inject your PDO connection to the `SqlRepository`
+  - Inject the Mapping class to the `SqlRepository`
+
+You're good to go.
   
 ## Mapping
 
