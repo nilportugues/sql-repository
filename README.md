@@ -32,7 +32,7 @@ SQL Repository allows you to fetch, paginate and operate with data easily withou
 - **Both custom ids and autoincremental ids are supported**
   - Want to use UUID or a custom ID strategy? No problem! 
 - **Caching layer required? Easily to add!**
-  - Require the *[CacheRepository]()* from componer to consistent caching to all operations.
+  - Require the *[CacheRepository]()* from Composer to add consistent caching to all operations.
 
 ## Installation
 
