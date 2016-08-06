@@ -53,9 +53,20 @@ See the [/example](https://github.com/PHPRepository/sql-repository/tree/master/e
 - You require a class to extend from `SqlRepository` class provided. Inject your PDO connection and the Mapping class to the `SqlRepository`
 
 You're good to go.
-  
+
+--
+
 ## Mapping
 
+## Repository methods
+
+### Filtering methods
+
+### Sorting
+
+### Fields
+
+--
 
 ## Quality
 
@@ -65,14 +76,12 @@ This library attempts to comply with [PSR-1](http://www.php-fig.org/psr/psr-1/),
 
 If you notice compliance oversights, please send a patch via [Pull Request](https://github.com/PHPRepository/sql-repository/pulls).
 
-
 ## Contribute
 
 Contributions to the package are always welcome!
 
 * Report any bugs or issues you find on the [issue tracker](https://github.com/PHPRepository/sql-repository/issues/new).
 * You can grab the source code at the package's [Git Repository](https://github.com/PHPRepository/sql-repository).
-
 
 ## Support
 
