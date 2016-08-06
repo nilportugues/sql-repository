@@ -70,4 +70,14 @@ trait SqlRepositoryHydrator
 
         return $this->hydrateArray($results);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function add(Identity $value)
+    {
+        $value = parent::add($value);
+
+        return $this->mapping->fromArray($value);
+    }
 }

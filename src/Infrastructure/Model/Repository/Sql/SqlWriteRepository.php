@@ -59,7 +59,12 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
             $this->insertQuery($value);
         }
 
-        return $this->selectOneQuery($value->id());
+        $id = $value->id();
+        if ($this->mapping->autoGenerateId()) {
+            $id = $this->queryBuilder()->getConnection()->lastInsertId();
+        }
+
+        return $this->selectOneQuery($id);
     }
 
     /**
@@ -104,6 +109,13 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
         }
 
         $object = $this->flattenObject($value);
+        if ($this->mapping->autoGenerateId()) {
+            $keys = array_flip($this->mapping->map());
+            $primaryKey = $keys[$this->mapping->identity()];
+            unset($object[$primaryKey]);
+            unset($mappings[$primaryKey]);
+        }
+
         $setOperation = ($isInsert) ? 'setValue' : 'set';
 
         foreach ($mappings as $objectProperty => $sqlColumn) {
@@ -163,9 +175,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
 
         $this->populateQuery($query, $value, true);
 
-        $query
-            ->insert($this->mapping->name())
-            ->execute();
+        $query->insert($this->mapping->name())->execute();
     }
 
     /**
@@ -183,7 +193,6 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
         $updates = [];
         $inserts = [];
 
-
         /** @var Identity $value */
         foreach ($values as $value) {
             if (false !== array_key_exists((string) $value->id(), $alreadyExistingRows)) {
@@ -192,7 +201,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
                 $inserts[] = $value;
             }
         }
-        
+
         foreach ($updates as $update) {
             $this->updateQuery($update);
         }
@@ -228,7 +237,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
 
         $ids = [];
 
-        foreach($results as $row) {
+        foreach ($results as $row) {
             $id = array_pop($row);
             $ids[$id] = $id;
         }

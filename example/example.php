@@ -23,10 +23,10 @@ CREATE TABLE users (
 $mapping = new UserMapping();
 $repository = new UserRepository($pdo, $mapping);
 
-$user = new User(1, 'nilportugues', 'Nil', 'hello@example.org', new DateTime('2016-01-11'));
-$repository->add($user);
+$user = new User(null, 'nilportugues', 'Nil', 'hello@example.org', new DateTime('2016-01-11'));
+$user = $repository->add($user);
 
-$userId = new UserId(1);
+$userId = new UserId($user->id());
 print_r($repository->find($userId));
 echo PHP_EOL;
 

@@ -21,7 +21,6 @@ class UserMapping implements Mapping
      * @return string
      */
     public function identity() : string
-
     {
         return 'user_id';
     }
@@ -52,7 +51,6 @@ class UserMapping implements Mapping
         ];
     }
 
-
     /**
      * @param array $data
      *
@@ -63,7 +61,6 @@ class UserMapping implements Mapping
         if (empty($data)) {
             return;
         }
-
 
         return new User(
             $data['user_id'],
@@ -83,5 +80,4 @@ class UserMapping implements Mapping
     {
         return true;
     }
-
 }

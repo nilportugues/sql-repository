@@ -99,12 +99,12 @@ abstract class BaseSqlRepository
     {
         $query = $this->queryBuilder();
 
-        return $query
+        $q = $query
             ->select(($fields) ? $fields : ['*'])
             ->from($this->mapping->name())
             ->andWhere($query->expr()->eq($this->mapping->identity(), ':id'))
-            ->setParameter(':id', $id)
-            ->execute()
-            ->fetch(PDO::FETCH_ASSOC);
+            ->setParameter(':id', $id);
+
+        return $q->execute()->fetch(PDO::FETCH_ASSOC);
     }
 }
