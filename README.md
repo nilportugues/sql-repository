@@ -30,6 +30,14 @@ It allows you to fetch, paginate and operate with data easily without adding ove
 - **Both custom ids and autoincremental ids are supported**
   - Want to use UUID or a custom ID strategy? No problem! 
   
+## Installation
+
+Use [Composer](https://getcomposer.org) to install the package:
+
+```json
+$ composer require nilportugues/sql-repository
+```
+
 ## Usage
 
 See the [/example](https://github.com/PHPRepository/sql-repository/tree/master/example) directory.
@@ -39,5 +47,38 @@ Examples for both `Custom ID` and `AutoIncremental ID` are provided.
 ## Mapping
 
 
+## Quality
+
+To run the PHPUnit tests at the command line, go to the tests directory and issue phpunit.
+
+This library attempts to comply with [PSR-1](http://www.php-fig.org/psr/psr-1/), [PSR-2](http://www.php-fig.org/psr/psr-2/), [PSR-4](http://www.php-fig.org/psr/psr-4/).
+
+If you notice compliance oversights, please send a patch via [Pull Request](https://github.com/PHPRepository/sql-repository/pulls).
+
+
+## Contribute
+
+Contributions to the package are always welcome!
+
+* Report any bugs or issues you find on the [issue tracker](https://github.com/PHPRepository/sql-repository/issues/new).
+* You can grab the source code at the package's [Git Repository](https://github.com/PHPRepository/sql-repository).
+
+
+## Support
+
+Get in touch with me using one of the following means:
+
+ - Emailing me at <contact@nilportugues.com>
+ - Opening an [Issue](https://github.com/PHPRepository/sql-repository/issues/new)
+
+
+## Authors
+
+* [Nil Portugués Calderó](http://nilportugues.com)
+* [The Community Contributors](https://github.com/PHPRepository/sql-repository/graphs/contributors)
+
+
+## License
+The code base is licensed under the [MIT license](LICENSE).
 
 
