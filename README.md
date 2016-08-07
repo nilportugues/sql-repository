@@ -12,10 +12,9 @@ SQL Repository allows you to fetch, paginate and operate with data easily withou
 Table of Contents
 =================
 
-  * [SQL Repository](#sql-repository)
-    * [Features](#features)
-    * [Installation](#installation)
-    * [Usage](#usage)
+  * [Features](#features)
+  * [Installation](#installation)
+  * [Usage](#usage)
   * [Mapping](#mapping)
     * [Entity class](#entity-class)
     * [Mapping class](#mapping-class)
