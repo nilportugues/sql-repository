@@ -130,8 +130,6 @@ class UserMapping implements Mapping
 {
     /**
      * Name of the identity field in storage.
-     *
-     * @return string
      */
     public function identity() : string
     {
@@ -140,8 +138,6 @@ class UserMapping implements Mapping
 
     /**
      * Returns the table name.
-     *
-     * @return string
      */
     public function name() : string
     {
@@ -151,8 +147,6 @@ class UserMapping implements Mapping
     /**
      * Keys are object properties without property defined in identity(). 
      * Values its SQL column equivalents.
-     *
-     * @return array
      */
     public function map() : array
     {
@@ -172,7 +166,6 @@ class UserMapping implements Mapping
 
     /**
      * @param array $data
-     *
      * @return User
      */
     public function fromArray(array $data)
@@ -187,10 +180,7 @@ class UserMapping implements Mapping
     }
 
     /**
-     * The automatic generated strategy used will be the 
-     * data-store's if set to true.
-     *
-     * @return bool
+     * The automatic generated strategy used will be the data-store's if set to true.
      */
     public function autoGenerateId() : bool
     {
