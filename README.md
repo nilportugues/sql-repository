@@ -178,7 +178,7 @@ class UserMapping implements Mapping
             'email' => 'email',
             
             // Notice how we are accessing date value inside
-            // the \DateTime object! We use dont notation to 
+            // the \DateTime object! We use dot notation to 
             // access deep values.
             
             'registeredOn.date' => 'created_at', 
