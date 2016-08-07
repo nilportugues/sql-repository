@@ -230,25 +230,27 @@ If you're not into CRUD, you can also have read-only, write-only and pagination-
 
 ### From PageRepository
 
+---
 
-
-## Data Operations
+# Data Operations
 
 All data can be extracted by fields name, using filters, applying ordering and pages, capable of applying fields, filters and ordering criteria.
 
-### Fields
+## Fields
 
 Selecting by field will make hydratation fail. Currently partial object hydratation is not supported.
 
 **Class:** `NilPortugues\Foundation\Domain\Model\Repository\Fields`
+
 **Methods:**
 - `public function __construct(array $fields = [])`
 - `public function add($field)`
 - `public function get()`
 
-### Filtering
+## Filtering
 
 **Class:** `NilPortugues\Foundation\Domain\Model\Repository\Filter`
+
 **Methods:**
 - `public function filters()`
 - `public function must()`
@@ -280,13 +282,14 @@ For **must()**, **mustNot()** and **should()**, the methods available are:
 - `public function get()`
 - `public function hasEmpty($filterName)` 
 
-### Pagination 
+## Pagination 
 
 Pagination is handled by two objects, `Pageable` that has the requirements to paginate, and `Page` that it's actually the page with the page data, such as page number, total number, and the data.
 
-#### Pageable
+### Pageable
 
 **Class:** `NilPortugues\Foundation\Domain\Model\Repository\Pageable`
+
 **Methods:**
 - `public function __construct($pageNumber, $pageSize, Sort $sort = null, Filter $filter = null, Fieldse $fields = null)`
 - `public function offset()`
@@ -300,9 +303,10 @@ Pagination is handled by two objects, `Pageable` that has the requirements to pa
 - `public function filters()`
 - `public function fields()`
 
-#### Page object
+### Page object
 
 **Class:** `NilPortugues\Foundation\Domain\Model\Repository\Page`
+
 **Methods:**
 - `public function __construct(array $elements, $totalElements, $pageNumber, $totalPages, Sort $sort = null, Filter $filter = null, Fields $fields = null)`
 - `public function content()`
@@ -321,7 +325,7 @@ Pagination is handled by two objects, `Pageable` that has the requirements to pa
 - `public function totalElements()`
 - `public function map(callable $converter)`
 
-### Sorting
+## Sorting
 
 **Class:** `NilPortugues\Foundation\Domain\Model\Repository\Sort`
 **Methods:**
@@ -333,7 +337,7 @@ Pagination is handled by two objects, `Pageable` that has the requirements to pa
 - `public function setOrderFor($propertyName, Order $order)`
 - `public function property($propertyName)`
 
-#### Ordering
+### Ordering
 
 Sometimes you want to sort by multiple fields, this is where Order comes in play.
 
@@ -345,6 +349,8 @@ Sometimes you want to sort by multiple fields, this is where Order comes in play
 - `public function __toString()`
 - `public function equals($object)`
 - `public function direction()`
+
+
 --
 
 # Quality
