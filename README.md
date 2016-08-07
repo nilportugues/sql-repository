@@ -231,12 +231,111 @@ If you're not into CRUD, you can also have read-only, write-only and pagination-
 ### From PageRepository
 
 
-## Filtering methods
+## Filtering
+
 
 ## Sorting
 
 ## Fields
 
+- **NilPortugues\Foundation\Domain\Model\Repository\Fields**
+    - `public function __construct(array $fields = [])`
+    - `public function add($field)`
+    - `public function get()`
+
+- **NilPortugues\Foundation\Domain\Model\Repository\Filter**
+    - `public function filters()`
+    - `public function must()`
+    - `public function mustNot()`
+    - `public function should()`
+    - `public function clear()`
+    
+- **NilPortugues\Foundation\Domain\Model\Repository\BaseFilter**   
+    - `public function notStartsWith($filterName, $value)`
+    - `public function notEndsWith($filterName, $value)`
+    - `public function notEmpty($filterName)`
+    - `public function empty($filterName)`
+    - `public function startsWith($filterName, $value)`
+    - `public function endsWith($filterName, $value)`
+    - `public function equal($filterName, $value)`
+    - `public function notEqual($filterName, $value)`
+    - `public function includeGroup($filterName, array $value)`
+    - `public function notIncludeGroup($filterName, array $value)`
+    - `public function range($filterName, $firstValue, $secondValue)`
+    - `public function notRange($filterName, $firstValue, $secondValue)`
+    - `public function notContain($filterName, $value)`
+    - `public function contain($filterName, $value)`
+    - `public function beGreaterThanOrEqual($filterName, $value)`
+    - `public function beGreaterThan($filterName, $value)`
+    - `public function beLessThanOrEqual($filterName, $value)`
+    - `public function beLessThan($filterName, $value)`
+    - `public function clear()`
+    - `public function get()`
+    - `public function hasEmpty($filterName)` //alias of empty() for BC reasons.
+
+- **NilPortugues\Foundation\Domain\Model\Repository\Order**
+    - `public function __construct($direction)`
+    - `public function isDescending()`
+    - `public function isAscending()`
+    - `public function __toString()`
+    - `public function equals($object)`
+    - `public function direction()`
+
+
+
+## Pagination 
+
+Pagination is handled by two objects, `Pageable` that has the requirements to paginate, and `Page` that it's actually the page with the page data, such as page number, total number, and the data.
+
+### Pageable
+
+**Class**
+
+- **NilPortugues\Foundation\Domain\Model\Repository\Pageable**
+
+**Methods**
+
+- `public function __construct($pageNumber, $pageSize, SortInterface $sort = null, FilterInterface $filter = null, FieldsInterface $fields = null)`
+- `public function offset()`
+- `public function pageNumber()`
+- `public function sortings()`
+- `public function next()`
+- `public function pageSize()`
+- `public function previousOrFirst()`
+- `public function hasPrevious()`
+- `public function first()`
+- `public function filters()`
+- `public function fields()`
+
+### Page object
+- **NilPortugues\Foundation\Domain\Model\Repository\Page**
+    - `public function __construct(array $elements, $totalElements, $pageNumber, $totalPages, SortInterface $sort = null, FilterInterface $filter = null, FieldsInterface $fields = null)`
+    - `public function content()`
+    - `public function hasPrevious()`
+    - `public function isFirst()`
+    - `public function isLast()`
+    - `public function hasNext()`
+    - `public function pageSize()`
+    - `public function pageNumber()`
+    - `public function totalPages()`
+    - `public function nextPageable()`
+    - `public function sortings()`
+    - `public function filters()`
+    - `public function fields()`
+    - `public function previousPageable()`
+    - `public function totalElements()`
+    - `public function map(callable $converter)`
+
+## Sorting
+
+- **NilPortugues\Foundation\Domain\Model\Repository\Sort**
+    - `public function __construct(array $properties = [], OrderInterface $order = null)`
+    - `public function andSort(SortInterface $sort)`
+    - `public function orders()`
+    - `public function equals(SortInterface $sort)`
+    - `public function orderFor($propertyName)`
+    - `public function setOrderFor($propertyName, OrderInterface $order)`
+    - `public function property($propertyName)`
 --
 
 # Quality
