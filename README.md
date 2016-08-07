@@ -68,7 +68,7 @@ For complex objects, let's say an Entity that has a Value Object, it is possible
 
 Mappings are also used to hydrate data into it's entities again if the hydrator trait is used.
 
-**Entity class**
+### Entity class
 
 Remember, an Entity must implement the `NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity` interface to work with SqlRepository. 
 
@@ -117,7 +117,7 @@ class User implements Identity
 }
 ```
 
-**Mapping class**
+### Mapping class
 
 All methods from Mapping interface are mandatory. 
 
@@ -189,7 +189,7 @@ class UserMapping implements Mapping
 }
 ```
 
-**Mapping in the Repository**
+### Mapping in the Repository
 
 Finally, it's usage is straight-forward:
 
