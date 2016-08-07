@@ -231,71 +231,64 @@ If you're not into CRUD, you can also have read-only, write-only and pagination-
 ### From PageRepository
 
 
-## Filtering
 
+## Data Operations
 
-## Sorting
+All data can be extracted by fields name, using filters, applying ordering and pages, capable of applying fields, filters and ordering criteria.
 
-## Fields
+### Fields
 
-- **NilPortugues\Foundation\Domain\Model\Repository\Fields**
-    - `public function __construct(array $fields = [])`
-    - `public function add($field)`
-    - `public function get()`
+Selecting by field will make hydratation fail. Currently partial object hydratation is not supported.
 
-- **NilPortugues\Foundation\Domain\Model\Repository\Filter**
-    - `public function filters()`
-    - `public function must()`
-    - `public function mustNot()`
-    - `public function should()`
-    - `public function clear()`
+**Class:** `NilPortugues\Foundation\Domain\Model\Repository\Fields`
+**Methods:**
+- `public function __construct(array $fields = [])`
+- `public function add($field)`
+- `public function get()`
+
+### Filtering
+
+**Class:** `NilPortugues\Foundation\Domain\Model\Repository\Filter`
+**Methods:**
+- `public function filters()`
+- `public function must()`
+- `public function mustNot()`
+- `public function should()`
+- `public function clear()`
     
-- **NilPortugues\Foundation\Domain\Model\Repository\BaseFilter**   
-    - `public function notStartsWith($filterName, $value)`
-    - `public function notEndsWith($filterName, $value)`
-    - `public function notEmpty($filterName)`
-    - `public function empty($filterName)`
-    - `public function startsWith($filterName, $value)`
-    - `public function endsWith($filterName, $value)`
-    - `public function equal($filterName, $value)`
-    - `public function notEqual($filterName, $value)`
-    - `public function includeGroup($filterName, array $value)`
-    - `public function notIncludeGroup($filterName, array $value)`
-    - `public function range($filterName, $firstValue, $secondValue)`
-    - `public function notRange($filterName, $firstValue, $secondValue)`
-    - `public function notContain($filterName, $value)`
-    - `public function contain($filterName, $value)`
-    - `public function beGreaterThanOrEqual($filterName, $value)`
-    - `public function beGreaterThan($filterName, $value)`
-    - `public function beLessThanOrEqual($filterName, $value)`
-    - `public function beLessThan($filterName, $value)`
-    - `public function clear()`
-    - `public function get()`
-    - `public function hasEmpty($filterName)` //alias of empty() for BC reasons.
+For **must()**, **mustNot()** and **should()**, the methods available are:
 
-- **NilPortugues\Foundation\Domain\Model\Repository\Order**
-    - `public function __construct($direction)`
-    - `public function isDescending()`
-    - `public function isAscending()`
-    - `public function __toString()`
-    - `public function equals($object)`
-    - `public function direction()`
+- `public function notStartsWith($filterName, $value)`
+- `public function notEndsWith($filterName, $value)`
+- `public function notEmpty($filterName)`
+- `public function empty($filterName)`
+- `public function startsWith($filterName, $value)`
+- `public function endsWith($filterName, $value)`
+- `public function equal($filterName, $value)`
+- `public function notEqual($filterName, $value)`
+- `public function includeGroup($filterName, array $value)`
+- `public function notIncludeGroup($filterName, array $value)`
+- `public function range($filterName, $firstValue, $secondValue)`
+- `public function notRange($filterName, $firstValue, $secondValue)`
+- `public function notContain($filterName, $value)`
+- `public function contain($filterName, $value)`
+- `public function beGreaterThanOrEqual($filterName, $value)`
+- `public function beGreaterThan($filterName, $value)`
+- `public function beLessThanOrEqual($filterName, $value)`
+- `public function beLessThan($filterName, $value)`
+- `public function clear()`
+- `public function get()`
+- `public function hasEmpty($filterName)` 
 
-
-
-## Pagination 
+### Pagination 
 
 Pagination is handled by two objects, `Pageable` that has the requirements to paginate, and `Page` that it's actually the page with the page data, such as page number, total number, and the data.
 
-### Pageable
+#### Pageable
 
-**Class**
-
-- **NilPortugues\Foundation\Domain\Model\Repository\Pageable**
-
-**Methods**
-
-- `public function __construct($pageNumber, $pageSize, SortInterface $sort = null, FilterInterface $filter = null, FieldsInterface $fields = null)`
+**Class:** `NilPortugues\Foundation\Domain\Model\Repository\Pageable`
+**Methods:**
+- `public function __construct($pageNumber, $pageSize, Sort $sort = null, Filter $filter = null, Fieldse $fields = null)`
 - `public function offset()`
 - `public function pageNumber()`
 - `public function sortings()`
@@ -307,35 +300,51 @@ Pagination is handled by two objects, `Pageable` that has the requirements to pa
 - `public function filters()`
 - `public function fields()`
 
-### Page object
-- **NilPortugues\Foundation\Domain\Model\Repository\Page**
-    - `public function __construct(array $elements, $totalElements, $pageNumber, $totalPages, SortInterface $sort = null, FilterInterface $filter = null, FieldsInterface $fields = null)`
-    - `public function content()`
-    - `public function hasPrevious()`
-    - `public function isFirst()`
-    - `public function isLast()`
-    - `public function hasNext()`
-    - `public function pageSize()`
-    - `public function pageNumber()`
-    - `public function totalPages()`
-    - `public function nextPageable()`
-    - `public function sortings()`
-    - `public function filters()`
-    - `public function fields()`
-    - `public function previousPageable()`
-    - `public function totalElements()`
-    - `public function map(callable $converter)`
+#### Page object
 
-## Sorting
+**Class:** `NilPortugues\Foundation\Domain\Model\Repository\Page`
+**Methods:**
+- `public function __construct(array $elements, $totalElements, $pageNumber, $totalPages, Sort $sort = null, Filter $filter = null, Fields $fields = null)`
+- `public function content()`
+- `public function hasPrevious()`
+- `public function isFirst()`
+- `public function isLast()`
+- `public function hasNext()`
+- `public function pageSize()`
+- `public function pageNumber()`
+- `public function totalPages()`
+- `public function nextPageable()`
+- `public function sortings()`
+- `public function filters()`
+- `public function fields()`
+- `public function previousPageable()`
+- `public function totalElements()`
+- `public function map(callable $converter)`
 
-- **NilPortugues\Foundation\Domain\Model\Repository\Sort**
-    - `public function __construct(array $properties = [], OrderInterface $order = null)`
-    - `public function andSort(SortInterface $sort)`
-    - `public function orders()`
-    - `public function equals(SortInterface $sort)`
-    - `public function orderFor($propertyName)`
-    - `public function setOrderFor($propertyName, OrderInterface $order)`
-    - `public function property($propertyName)`
+### Sorting
+
+**Class:** `NilPortugues\Foundation\Domain\Model\Repository\Sort`
+**Methods:**
+- `public function __construct(array $properties = [], Order $order = null)`
+- `public function andSort(SortInterface $sort)`
+- `public function orders()`
+- `public function equals(SortInterface $sort)`
+- `public function orderFor($propertyName)`
+- `public function setOrderFor($propertyName, Order $order)`
+- `public function property($propertyName)`
+
+#### Ordering
+
+Sometimes you want to sort by multiple fields, this is where Order comes in play.
+
+**Class**: `NilPortugues\Foundation\Domain\Model\Repository\Order`
+**Methods:**
+- `public function __construct($direction)`
+- `public function isDescending()`
+- `public function isAscending()`
+- `public function __toString()`
+- `public function equals($object)`
+- `public function direction()`
 --
 
 # Quality
