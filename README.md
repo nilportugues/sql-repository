@@ -213,15 +213,15 @@ The repository class implements all the methods required to interact and filter 
 
 SqlRepository can handle all CRUD operations as it implements the following interfaces:
 
-- `NilPortugues\Foundation\Domain\Model\Repository\Contracts\PageRepository`
-- `NilPortugues\Foundation\Domain\Model\Repository\Contracts\ReadRepository`
-- `NilPortugues\Foundation\Domain\Model\Repository\Contracts\WriteRepository`
+- **NilPortugues\Foundation\Domain\Model\Repository\Contracts\PageRepository**
+- **NilPortugues\Foundation\Domain\Model\Repository\Contracts\ReadRepository**
+- **NilPortugues\Foundation\Domain\Model\Repository\Contracts\WriteRepository**
 
 If you're not into CRUD, and you require, let's say a read-only, a write-only, or a pageable-only reppository, it is possible to create a SQL repository handling these operations only by extending the following classes:
 
-- `NilPortugues\Foundation\Infrastructure\Model\Repository\Sql\SqlPageRepository`
-- `NilPortugues\Foundation\Infrastructure\Model\Repository\Sql\SqlReadRepository`
-- `NilPortugues\Foundation\Infrastructure\Model\Repository\Sql\SqlWriteRepository`
+- **NilPortugues\Foundation\Infrastructure\Model\Repository\Sql\SqlPageRepository**
+- **NilPortugues\Foundation\Infrastructure\Model\Repository\Sql\SqlReadRepository**
+- **NilPortugues\Foundation\Infrastructure\Model\Repository\Sql\SqlWriteRepository**
 
 ### Methods
 
