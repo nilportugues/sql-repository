@@ -328,6 +328,7 @@ Pagination is handled by two objects, `Pageable` that has the requirements to pa
 ## Sorting
 
 **Class:** `NilPortugues\Foundation\Domain\Model\Repository\Sort`
+
 **Methods:**
 - `public function __construct(array $properties = [], Order $order = null)`
 - `public function andSort(SortInterface $sort)`
@@ -342,6 +343,7 @@ Pagination is handled by two objects, `Pageable` that has the requirements to pa
 Sometimes you want to sort by multiple fields, this is where Order comes in play.
 
 **Class**: `NilPortugues\Foundation\Domain\Model\Repository\Order`
+
 **Methods:**
 - `public function __construct($direction)`
 - `public function isDescending()`
