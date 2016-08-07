@@ -60,6 +60,18 @@ You're good to go.
 
 ## Mapping
 
+Mapping must implement the `NilPortugues\Foundation\Domain\Model\Repository\Contracts\Mapping` interface. 
+
+Mapping classes are used to read data from entities and save them in the storage of choice. This is done by mapping the Entities fields and specifying which fields and how are actually stored in the data storage.
+
+For complex objects, let's say an Entity that has a Value Object, it is possible to still do one single mapping on the Entity and access the Value Object properties to get them stored.
+
+Mappings are also used to hydrate data into it's entities again if the hydrator trait is used.
+
+**Entity class**
+
+**Mapping class**
+
 ## Repository 
 
 ### Methods
