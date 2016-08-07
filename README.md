@@ -34,11 +34,6 @@ Table of Contents
       * [Page object](#page-object)
     * [Sorting](#sorting)
       * [Ordering](#ordering)
-  * [Quality](#quality)
-  * [Contribute](#contribute)
-  * [Support](#support)
-  * [Authors](#authors)
-  * [License](#license)
   
 ## Features
 
