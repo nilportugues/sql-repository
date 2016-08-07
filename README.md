@@ -21,9 +21,9 @@ SQL Repository allows you to fetch, paginate and operate with data easily withou
   - Pagination is solved available using the Page and Pageable objects.
 - **Custom operations can be written using DBAL.**
 - **Want to change persistence layer? Provided repository alternatives are:**
-  - *[InMemoryRepository]()*: for testing purposes
-  - *[MongoDBRepository]()*: because your schema keeps changing
-  - *[FileRepository]()*: sites without DB access or for testing purposes.
+  - *[InMemoryRepository](https://github.com/PHPRepository/repository)*: for testing purposes
+  - *[FileRepository](https://github.com/PHPRepository/filesystem-repository)*: sites without DB access or for testing purposes.
+  - *[MongoDBRepository](https://github.com/PHPRepository/mongodb-repository)*: because your schema keeps changing
 - **Mapping written in PHP.**
   - Supports custom Data Types (a.k.a Value Objects). 
   - Mapping deep data structures made easy using dot-notation.
@@ -32,7 +32,7 @@ SQL Repository allows you to fetch, paginate and operate with data easily withou
 - **Both custom ids and autoincremental ids are supported**
   - Want to use UUID or a custom ID strategy? No problem! 
 - **Caching layer required? Easily to add!**
-  - Require the *[CacheRepository]()* from Composer to add consistent caching to all operations.
+  - Require the *[Repository Cache](https://github.com/PHPRepository/repository-cache)* package from Composer to add consistent caching to all operations.
 
 ## Installation
 
