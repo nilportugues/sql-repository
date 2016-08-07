@@ -22,6 +22,7 @@ Table of Contents
     * [Mapping the Repository](#mapping-the-repository)
   * [Repository](#repository)
     * [Methods](#methods)
+      * [Available in SqlRepository](#available-in-sqlrepository)
       * [Available in SqlWriteRepository](#available-in-sqlwriterepository)
       * [Available in SqlReadRepository](#available-in-sqlreadrepository)
       * [Available in SqlPageRepository](#available-in-sqlpagerepository)
@@ -253,6 +254,10 @@ If you're not into CRUD, you can also have read-only, write-only and pagination-
 
 
 ## Methods
+
+### Available in SqlRepository
+
+All the methods listed under SqlWriteRepository, SqlReadRepository and SqlPageRepository.
 
 ### Available in SqlWriteRepository
 
