@@ -189,7 +189,9 @@ class UserMapping implements Mapping
 }
 ```
 
-Finally, it's usage is straight-forward
+**Mapping in the Repository**
+
+Finally, it's usage is straight-forward:
 
 ```php
 use NilPortugues\Foundation\Infrastructure\Model\Repository\Sql\SqlRepository;
@@ -200,7 +202,9 @@ class UserRepository extends SqlRepository
     use SqlRepositoryHydrator;
 }
 
-$repository = new UserRepository($pdo, new UserMapping());
+$pdo = new PDO('mysql:host=localhost;dbname=test', 'user', 'password');
+$mapping = new UserMapping();
+$repository = new UserRepository($pdo, $mapping);
 ```
 
 ## Repository 
