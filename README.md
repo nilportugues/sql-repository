@@ -224,11 +224,29 @@ If you're not into CRUD, you can also have read-only, write-only and pagination-
 
 ## Methods
 
-### From WriteRepository
+### Available in SqlWriteRepository
 
-### From ReadRepository
+- `public function add($value)`
+- `public function addAll(array $values)`
+- `public function remove(Identity $id)`
+- `public function removeAll(Filter $filter = null)`
+- `public function transactional(callable $transaction)`
+- `public function count(Filter $filter = null)`
+- `public function exists(Identity $id)`
 
-### From PageRepository
+### Available in SqlReadRepository
+
+- `public function find(Identity $id, Fields $fields = null)`
+- `public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null)`
+- `public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null, Fields $fields = null)`
+- `public function count(Filter $filter = null)`
+- `public function exists(Identity $id)`
+
+### Available in SqlPageRepository
+
+- `public function findAll(Pageable $pageable = null)`
+- `public function count(Filter $filter = null)`
+- `public function exists(Identity $id)`
 
 ---
 
