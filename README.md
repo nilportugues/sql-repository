@@ -58,7 +58,7 @@ You're good to go.
 
 --
 
-## Mapping
+# Mapping
 
 Mapping must implement the `Mapping` interface. 
 
@@ -68,7 +68,7 @@ For complex objects, let's say an Entity that has a Value Object, it is possible
 
 Mappings are also used to hydrate data into it's entities again if the hydrator trait is used.
 
-### Entity class
+## Entity class
 
 Remember, an Entity must implement the `Identity` interface to work with SqlRepository. 
 
@@ -117,7 +117,7 @@ class User implements Identity
 }
 ```
 
-### Mapping class
+## Mapping class
 
 All methods from Mapping interface are mandatory. 
 
@@ -189,7 +189,7 @@ class UserMapping implements Mapping
 }
 ```
 
-### Mapping in the Repository
+## Mapping the Repository
 
 Finally, it's usage is straight-forward:
 
@@ -207,7 +207,9 @@ $mapping = new UserMapping();
 $repository = new UserRepository($pdo, $mapping);
 ```
 
-## Repository 
+---
+
+# Repository 
 
 The repository class implements all the methods required to interact and filter your data. 
 
@@ -220,24 +222,24 @@ If you're not into CRUD, you can also have read-only, write-only and pagination-
 - For pagination-only repositories extend the `SqlPageRepository` class. 
 
 
-### Methods
+## Methods
 
-#### From WriteRepository
+### From WriteRepository
 
-#### From ReadRepository
+### From ReadRepository
 
-#### From PageRepository
+### From PageRepository
 
 
-### Filtering methods
+## Filtering methods
 
-### Sorting
+## Sorting
 
-### Fields
+## Fields
 
 --
 
-## Quality
+# Quality
 
 To run the PHPUnit tests at the command line, go to the tests directory and issue phpunit.
 
@@ -245,14 +247,14 @@ This library attempts to comply with [PSR-1](http://www.php-fig.org/psr/psr-1/),
 
 If you notice compliance oversights, please send a patch via [Pull Request](https://github.com/PHPRepository/sql-repository/pulls).
 
-## Contribute
+# Contribute
 
 Contributions to the package are always welcome!
 
 * Report any bugs or issues you find on the [issue tracker](https://github.com/PHPRepository/sql-repository/issues/new).
 * You can grab the source code at the package's [Git Repository](https://github.com/PHPRepository/sql-repository).
 
-## Support
+# Support
 
 Get in touch with me using one of the following means:
 
@@ -260,13 +262,13 @@ Get in touch with me using one of the following means:
  - Opening an [Issue](https://github.com/PHPRepository/sql-repository/issues/new)
 
 
-## Authors
+# Authors
 
 * [Nil Portugués Calderó](http://nilportugues.com)
 * [The Community Contributors](https://github.com/PHPRepository/sql-repository/graphs/contributors)
 
 
-## License
+# License
 The code base is licensed under the [MIT license](LICENSE).
 
 
