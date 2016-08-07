@@ -9,6 +9,36 @@ Motivation for this library was the boredom of writing SQL or using query builde
 
 SQL Repository allows you to fetch, paginate and operate with data easily without adding overhead and following good practices.
 
+Table of Contents
+=================
+
+  * [SQL Repository](#sql-repository)
+    * [Features](#features)
+    * [Installation](#installation)
+    * [Usage](#usage)
+  * [Mapping](#mapping)
+    * [Entity class](#entity-class)
+    * [Mapping class](#mapping-class)
+    * [Mapping the Repository](#mapping-the-repository)
+  * [Repository](#repository)
+    * [Methods](#methods)
+      * [Available in SqlWriteRepository](#available-in-sqlwriterepository)
+      * [Available in SqlReadRepository](#available-in-sqlreadrepository)
+      * [Available in SqlPageRepository](#available-in-sqlpagerepository)
+  * [Data Operations](#data-operations)
+    * [Fields](#fields)
+    * [Filtering](#filtering)
+    * [Pagination](#pagination)
+      * [Pageable](#pageable)
+      * [Page object](#page-object)
+    * [Sorting](#sorting)
+      * [Ordering](#ordering)
+  * [Quality](#quality)
+  * [Contribute](#contribute)
+  * [Support](#support)
+  * [Authors](#authors)
+  * [License](#license)
+  
 ## Features
 
 - **Repository pattern right from the start.**
