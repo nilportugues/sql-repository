@@ -173,7 +173,7 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
     public function addAll(array $values)
     {
         if (empty($values)) {
-            return;
+            return [];
         }
 
         $ids = $this->fetchIds($values);

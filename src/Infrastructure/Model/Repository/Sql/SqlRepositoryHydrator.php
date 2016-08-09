@@ -90,7 +90,7 @@ trait SqlRepositoryHydrator
      */
     public function addAll(array $values)
     {
-        $results = parent::addAll($values);
+        $results = (array) parent::addAll($values);
 
         return $this->hydrateArray($results);
     }
