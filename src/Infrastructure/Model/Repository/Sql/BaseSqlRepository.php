@@ -30,6 +30,14 @@ abstract class BaseSqlRepository
     }
 
     /**
+     * @return \Doctrine\DBAL\Query\QueryBuilder
+     */
+    public function getDriver()
+    {
+        return $this->connection->createQueryBuilder();
+    }
+    
+    /**
      * @param Connection $connection
      * @param Mapping    $mapping
      *
