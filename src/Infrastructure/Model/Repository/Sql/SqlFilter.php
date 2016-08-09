@@ -242,10 +242,10 @@ class SqlFilter
         $isNot
     ) {
         $first = self::nextPlaceholder($placeholders, $operator, $isNot);
-        $placeholders[$first] = $value[0][0];
+        $placeholders[$first] = self::toIntegerIfBoolean($value[0][0]);
 
         $second = self::nextPlaceholder($placeholders, $operator, $isNot);
-        $placeholders[$second] = $value[0][1];
+        $placeholders[$second] = self::toIntegerIfBoolean($value[0][1]);
 
         $query->$operator(sprintf('%s %s %s AND %s', $key, $op, $first, $second));
     }
@@ -287,7 +287,7 @@ class SqlFilter
         foreach ($value as $k => $v) {
             $nextPlaceholder = self::nextPlaceholder($placeholders, $operator, $isNot);
             $names[] = $nextPlaceholder;
-            $placeholders[$nextPlaceholder] = $v;
+            $placeholders[$nextPlaceholder] = self::toIntegerIfBoolean($v);
         }
 
         $query->$operator($query->expr()->$op($key, $names));
@@ -348,6 +348,6 @@ class SqlFilter
         $value
     ) {
         $query->$operator(sprintf('%s %s %s', $key, $op, $nextPlaceholder));
-        $placeholders[$nextPlaceholder] = $value;
+        $placeholders[$nextPlaceholder] = self::toIntegerIfBoolean($value);
     }
 }
