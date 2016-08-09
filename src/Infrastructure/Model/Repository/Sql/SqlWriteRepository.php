@@ -230,14 +230,14 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
 
         $idsPlaceholders = [];
         foreach ($ids as $k => $id) {
-            $idsPlaceholders[':k'.$k] = $id;
+            $idsPlaceholders[':ids'.$k] = $id;
         }
 
         $results = (array) $selectQuery
             ->select([$this->mapping->identity()])
             ->from($this->mapping->name())
             ->where($selectQuery->expr()->in($this->mapping->identity(), array_keys($idsPlaceholders)))
-            ->setParameters(array_values($idsPlaceholders))
+            ->setParameters($idsPlaceholders)
             ->execute()
             ->fetchAll(PDO::FETCH_ASSOC);
 
