@@ -264,6 +264,7 @@ All the methods listed under SqlWriteRepository, SqlReadRepository and SqlPageRe
 - `public function transactional(callable $transaction)`
 - `public function count(Filter $filter = null)`
 - `public function exists(Identity $id)`
+- `public function getDriver()`
 
 ### Available in SqlReadRepository
 
@@ -272,13 +273,14 @@ All the methods listed under SqlWriteRepository, SqlReadRepository and SqlPageRe
 - `public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null, Fields $fields = null)`
 - `public function count(Filter $filter = null)`
 - `public function exists(Identity $id)`
+- `public function getDriver()`
 
 ### Available in SqlPageRepository
 
 - `public function findAll(Pageable $pageable = null)`
 - `public function count(Filter $filter = null)`
 - `public function exists(Identity $id)`
-
+- `public function getDriver()`
 ---
 
 # Data Operations
