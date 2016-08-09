@@ -66,22 +66,11 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
 
         $this->populateQuery($query, $value, false);
 
-        $affectedRows = $query
+        $query
             ->update($this->mapping->name())
             ->where($query->expr()->eq($this->mapping->identity(), ':id'))
             ->setParameter(':id', $value->id())
             ->execute();
-
-        if (0 === $affectedRows) {
-            throw new PDOException(
-                sprintf(
-                    'Could not update %s where %s = %s',
-                    $this->mapping->name(),
-                    $this->mapping->identity(),
-                    $value->id()
-                )
-            );
-        }
     }
 
     /**
