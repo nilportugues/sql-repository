@@ -174,7 +174,7 @@ class UserMapping implements Mapping
         return [
         
             // Flat objects or objects with one value don't 
-            // require don't notation.
+            // require dot notation.
             
             'userId' => 'user_id', 
             'username' => 'username',
