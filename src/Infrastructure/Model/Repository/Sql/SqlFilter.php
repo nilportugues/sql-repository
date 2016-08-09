@@ -312,7 +312,21 @@ class SqlFilter
         $value
     ) {
         $query->$operator($query->expr()->$op($key, $nextPlaceholder));
-        $placeholders[$nextPlaceholder] = $value;
+        $placeholders[$nextPlaceholder] = self::toIntegerIfBoolean($value);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return mixed
+     */
+    protected static function toIntegerIfBoolean($value)
+    {
+        if ($value === true || $value === false) {
+            $value = ($value) ? 1 : 0;
+        }
+
+        return $value;
     }
 
     /**

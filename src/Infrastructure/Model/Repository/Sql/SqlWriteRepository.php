@@ -122,7 +122,15 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
      */
     protected function flattenObject($value) : array
     {
-        return $this->serializer->serialize($value);
+        $result = $this->serializer->serialize($value);
+
+        return array_map(function ($v) {
+            if ($v === true || $v === false) {
+                return ($v) ? 1 : 0;
+            };
+
+            return $v;
+        }, $result);
     }
 
     /**
@@ -175,6 +183,10 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
      */
     public function addAll(array $values)
     {
+        if (empty($values)) {
+            return;
+        }
+
         $ids = $this->fetchIds($values);
         $alreadyExistingRows = $this->fetchExistingRows($ids);
 
@@ -216,10 +228,16 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
     {
         $selectQuery = $this->queryBuilder();
 
+        $idsPlaceholders = [];
+        foreach ($ids as $k => $id) {
+            $idsPlaceholders[':k'.$k] = $id;
+        }
+
         $results = (array) $selectQuery
             ->select([$this->mapping->identity()])
             ->from($this->mapping->name())
-            ->where($selectQuery->expr()->in($this->mapping->identity(), $ids))
+            ->where($selectQuery->expr()->in($this->mapping->identity(), array_keys($idsPlaceholders)))
+            ->setParameters(array_values($idsPlaceholders))
             ->execute()
             ->fetchAll(PDO::FETCH_ASSOC);
 

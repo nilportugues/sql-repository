@@ -36,7 +36,7 @@ abstract class BaseSqlRepository
     {
         return $this->connection->createQueryBuilder();
     }
-    
+
     /**
      * @param Connection $connection
      * @param Mapping    $mapping
