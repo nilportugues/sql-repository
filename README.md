@@ -172,7 +172,11 @@ class UserMapping implements Mapping
     public function map() : array
     {
         return [
-            'userId' => 'user_id',
+        
+            // Flat objects or objects with one value don't 
+            // require don't notation.
+            
+            'userId' => 'user_id', 
             'username' => 'username',
             'alias' => 'public_username',
             'email' => 'email',
@@ -180,6 +184,8 @@ class UserMapping implements Mapping
             // Notice how we are accessing date value inside
             // the \DateTime object! We use dot notation to 
             // access deep values.
+            // For instance, registeredOn.timezone will be 
+            // ignored because we are not mapping 
             
             'registeredOn.date' => 'created_at', 
         ];
