@@ -57,6 +57,14 @@ class SqlRepository implements ReadRepository, WriteRepository, PageRepository
     }
 
     /**
+     * @return \Doctrine\DBAL\Query\QueryBuilder
+     */
+    public function getDriver()
+    {
+        return $this->readRepository->getDriver();
+    }
+    
+    /**
      * Returns whether an entity with the given id exists.
      *
      * @param $id
