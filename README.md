@@ -281,6 +281,8 @@ All the methods listed under SqlWriteRepository, SqlReadRepository and SqlPageRe
 - `public function count(Filter $filter = null)`
 - `public function exists(Identity $id)`
 - `public function getDriver()`
+ 
+
 ---
 
 # Data Operations
