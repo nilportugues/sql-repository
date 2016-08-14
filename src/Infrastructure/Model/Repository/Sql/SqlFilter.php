@@ -37,12 +37,11 @@ class SqlFilter
         $columns = $mapping->map();
 
         foreach ($filter->filters() as $condition => $filters) {
-            if (array_key_exists($condition, $columns)) {
-                $filters = self::removeEmptyFilters($filters);
-                if (count($filters) > 0) {
-                    self::processConditions($columns, $placeholders, $query, $condition, $filters);
-                }
+            $filters = self::removeEmptyFilters($filters);
+            if (count($filters) > 0) {
+                self::processConditions($columns, $placeholders, $query, $condition, $filters);
             }
+
         }
 
         $query->setParameters($placeholders);
@@ -109,8 +108,14 @@ class SqlFilter
         $operator,
         $isNot
     ) {
+
         foreach ($filters as $filterName => $valuePair) {
             foreach ($valuePair as $key => $value) {
+
+                if (false === array_key_exists($key, $columns)) {
+                    break;
+                }
+
                 $key = self::fetchColumnName($columns, $key);
                 if (is_array($value) && count($value) > 0) {
                     $value = array_values($value);

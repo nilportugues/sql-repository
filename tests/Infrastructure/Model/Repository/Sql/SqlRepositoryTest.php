@@ -228,7 +228,6 @@ class SqlRepositoryTest extends \PHPUnit_Framework_TestCase
         $filter->must()->range('totalOrders', 3, 4);
 
         $results = $this->repository->findBy($filter);
-
         $this->assertEquals(3, count($results));
     }
 
