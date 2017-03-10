@@ -226,6 +226,10 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
      */
     protected function fetchExistingRows(array $ids) : array
     {
+        if (empty($ids)) {
+            return [];
+        }
+
         $selectQuery = $this->queryBuilder();
 
         $idsPlaceholders = [];
