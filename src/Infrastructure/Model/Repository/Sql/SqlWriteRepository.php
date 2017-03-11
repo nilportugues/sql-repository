@@ -43,12 +43,14 @@ class SqlWriteRepository extends BaseSqlRepository implements WriteRepository
     {
         try {
             $this->updateQuery($value);
+            $insert = false;
         } catch (PDOException $e) {
             $this->insertQuery($value);
+            $insert = true;
         }
 
         $id = $value->id();
-        if ($this->mapping->autoGenerateId()) {
+        if (($insert) && ($this->mapping->autoGenerateId())) {
             $id = $this->queryBuilder()->getConnection()->lastInsertId();
         }
 
