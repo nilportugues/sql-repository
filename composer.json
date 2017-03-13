@@ -15,7 +15,7 @@
   "minimum-stability": "dev",
   "require": {
     "php": ">=7.0",
-    "nilportugues/repository": "^3.0.2",
+    "nilportugues/repository": "^3.1",
     "nilportugues/assert": "^1.0",
 
     "doctrine/dbal" : "^2.5"
